@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_post"
+    app:startDestination="@id/post_list_dest">
+
+    <fragment
+        android:id="@+id/post_list_dest"
+        android:name="me.aprilian.kumparantest.ui.PostListFragment"
+        android:label="Post List"
+        tools:layout="@layout/fragment_post_list">
+        <action
+            android:id="@+id/action_home_to_details"
+            app:destination="@id/post_dest"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/post_dest"
+        android:name="me.aprilian.kumparantest.ui.PostFragment"
+        android:label="Post"
+        tools:layout="@layout/fragment_post" />
+
+</navigation>
