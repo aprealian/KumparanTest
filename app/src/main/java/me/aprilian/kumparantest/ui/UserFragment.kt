@@ -2,10 +2,11 @@ package me.aprilian.kumparantest.ui
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -26,7 +27,6 @@ import me.aprilian.kumparantest.databinding.ItemAlbumBinding
 import me.aprilian.kumparantest.databinding.ItemPhotoBinding
 import me.aprilian.kumparantest.repository.UserRepository
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
-import me.aprilian.kumparantest.utils.Utils.toast
 import me.aprilian.kumparantest.utils.extension.load
 import javax.inject.Inject
 
@@ -51,7 +51,7 @@ class UserFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        adapter = AlbumAdapter()
+        adapter = AlbumAdapter(requireActivity())
         binding.adapter = adapter
         userViewModel.getAlbums().let { adapter.submitList(it) }
     }
@@ -101,7 +101,9 @@ class UserViewModel @Inject constructor(
     }
 }
 
-class AlbumAdapter : ListAdapter<AlbumsResponse.AlbumsResponseItem, AlbumAdapter.AlbumViewHolder>(Companion) {
+class AlbumAdapter constructor(
+    private val activity: FragmentActivity
+) : ListAdapter<AlbumsResponse.AlbumsResponseItem, AlbumAdapter.AlbumViewHolder>(Companion) {
 
     class AlbumViewHolder(val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -122,13 +124,17 @@ class AlbumAdapter : ListAdapter<AlbumsResponse.AlbumsResponseItem, AlbumAdapter
         holder.binding.album = currentAlbums
         holder.binding.executePendingBindings()
         holder.binding.rvPhoto.addItemDecoration(SpacesItemDecoration(16))
-        val adapter = PhotoAdapter()
+        val adapter = PhotoAdapter(activity)
         holder.binding.adapter = adapter
         PhotoResponse.PhotoItem.getSamples().let { adapter.submitList(it) }
     }
 }
 
-class PhotoAdapter : ListAdapter<PhotoResponse.PhotoItem, PhotoAdapter.PhotoViewHolder>(Companion) {
+class PhotoAdapter constructor(
+    private val activity: FragmentActivity
+) : ListAdapter<PhotoResponse.PhotoItem, PhotoAdapter.PhotoViewHolder>(Companion) {
+
+//    private var listener: IPhoto? = null
 
     class PhotoViewHolder(val binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -149,5 +155,22 @@ class PhotoAdapter : ListAdapter<PhotoResponse.PhotoItem, PhotoAdapter.PhotoView
         holder.binding.photo = currentPhoto
         holder.binding.ivPhoto.load(currentPhoto.thumbnailUrl)
         holder.binding.executePendingBindings()
+        holder.itemView.setOnClickListener {
+//            listener?.onClickPhoto(currentPhoto)
+            openPhoto(activity, currentPhoto)
+        }
+    }
+
+//    fun setListener(listener: IPhoto){
+//        this.listener = listener
+//    }
+//
+//    interface IPhoto{
+//        fun onClickPhoto(photo: PhotoResponse.PhotoItem)
+//    }
+
+    private fun openPhoto(activity: FragmentActivity, photo: PhotoResponse.PhotoItem){
+        val bottomSheetDialog: PhotoViewerDialog = PhotoViewerDialog.newInstance(photo)
+        bottomSheetDialog.show(activity.supportFragmentManager, "Bottom Sheet Dialog Fragment")
     }
 }

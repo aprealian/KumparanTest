@@ -36,6 +36,7 @@ buildscript {
         retrofitVersion = '2.9.0'
         roomVersion = '2.2.5'
         testExtJunit = '1.1.0'
+        touchImageView = '3.1.0'
         uiAutomatorVersion = '2.2.0'
         viewPagerVersion = '1.0.0'
         workVersion = '2.1.0'
@@ -43,6 +44,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url "https://www.jitpack.io" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.1.2"
@@ -58,6 +60,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url "https://www.jitpack.io" }
     }
 }
 

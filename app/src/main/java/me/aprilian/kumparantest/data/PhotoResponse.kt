@@ -1,7 +1,10 @@
 package me.aprilian.kumparantest.data
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 class PhotoResponse : ArrayList<PhotoResponse.PhotoItem>(){
+    @Parcelize
     data class PhotoItem(
         @SerializedName("albumId")
         val albumId: Int,
@@ -13,7 +16,7 @@ class PhotoResponse : ArrayList<PhotoResponse.PhotoItem>(){
         val title: String,
         @SerializedName("url")
         val url: String
-    ) {
+    ) : Parcelable {
         companion object{
             fun getSamples(): ArrayList<PhotoItem>{
                 return arrayListOf(
