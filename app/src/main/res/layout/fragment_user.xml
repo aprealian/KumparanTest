@@ -5,14 +5,11 @@
 
     <data>
         <variable
-            name="post"
-            type="me.aprilian.kumparantest.data.Post" />
+            name="user"
+            type="me.aprilian.kumparantest.data.User" />
         <variable
             name="adapter"
-            type="me.aprilian.kumparantest.ui.CommentsAdapter" />
-        <variable
-            name="vm"
-            type="me.aprilian.kumparantest.ui.PostViewModel" />
+            type="me.aprilian.kumparantest.ui.AlbumAdapter" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -24,39 +21,48 @@
             android:paddingHorizontal="16dp">
 
             <TextView
-                android:id="@+id/tvAuthorName"
+                android:id="@+id/tvUserName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@{post.user.name}"
+                android:text="@{user.name}"
                 android:textColor="@color/purple_200"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Lorem Ipsum"
-                android:onClick="@{(view) -> vm.openUser(view, post.user)}"
                 />
 
             <TextView
-                android:id="@+id/tvTitle"
+                android:id="@+id/tvUserEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@{post.title}"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/tvAuthorName"
+                android:text="@{user.email}"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserName"
                 tools:text="Lorem Ipsum"
                 />
 
             <TextView
-                android:id="@+id/tvBody"
+                android:id="@+id/tvUserAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="@{post.body}"
+                android:text="@{user.address.street}"
                 android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserEmail"
+                tools:text="This is the description.."
+                />
+
+            <TextView
+                android:id="@+id/tvUserCompany"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@{user.company.name}"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserAddress"
                 tools:text="This is the description.."
                 />
 
@@ -66,18 +72,18 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="16dp"
                 android:background="#6ACACACA"
-                app:layout_constraintTop_toBottomOf="@+id/tvBody"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserCompany"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvComments"
+                android:id="@+id/rvAlbums"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:setAdapter="@{adapter}"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintTop_toBottomOf="@+id/line"
                 tools:itemCount="3"
-                tools:listitem="@layout/item_comment"
+                tools:listitem="@layout/item_album"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,5 +1,6 @@
 package me.aprilian.kumparantest.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,14 +11,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import me.aprilian.kumparantest.R
 import me.aprilian.kumparantest.data.Comment
 import me.aprilian.kumparantest.data.Post
+import me.aprilian.kumparantest.data.User
 import me.aprilian.kumparantest.databinding.FragmentPostBinding
 import me.aprilian.kumparantest.databinding.ItemCommentBinding
 import me.aprilian.kumparantest.repository.PostRepository
@@ -49,6 +54,7 @@ class PostFragment : Fragment() {
         adapter = CommentsAdapter()
         binding.adapter = adapter
         postViewModel.getComments().let { adapter.submitList(it) }
+        binding.vm = postViewModel
     }
 
     private fun initObserver() {
@@ -59,8 +65,8 @@ class PostFragment : Fragment() {
 
     private fun initArgs() {
         arguments?.let { bundle ->
-            val post = bundle.getParcelable(ARG_POST) as Post?
-            post?.let {
+            postViewModel.post = bundle.getParcelable(ARG_POST) as Post?
+            postViewModel.post?.let {
                 binding.post = it
                 postViewModel.loadComments(it.id)
             }
@@ -70,8 +76,11 @@ class PostFragment : Fragment() {
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val postRepository: PostRepository
 ): ViewModel(){
+    var post: Post? = null
+
     val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
 
     private val comments: ArrayList<Comment> = arrayListOf()
@@ -88,6 +97,12 @@ class PostViewModel @Inject constructor(
                 isRefreshList.value = true
             }
         }
+    }
+
+    fun openUser(view: View, user: User){
+        val bundle = Bundle()
+        bundle.putParcelable(ARG_USER, user)
+        view.findNavController().navigate(R.id.action_post_to_user, bundle)
     }
 }
 

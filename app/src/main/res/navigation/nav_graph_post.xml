@@ -30,6 +30,27 @@
         android:id="@+id/post_dest"
         android:name="me.aprilian.kumparantest.ui.PostFragment"
         android:label="Post"
-        tools:layout="@layout/fragment_post" />
+        tools:layout="@layout/fragment_post">
+        <action
+            android:id="@+id/action_post_to_user"
+            app:destination="@id/user_dest"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpToSaveState="true"
+            app:restoreState="true">
+            <argument
+                android:name="userId"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/user_dest"
+        android:name="me.aprilian.kumparantest.ui.UserFragment"
+        android:label="user"
+        tools:layout="@layout/fragment_user" />
 
 </navigation>

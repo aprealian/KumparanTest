@@ -1,8 +1,6 @@
 package me.aprilian.kumparantest.api
 
-import me.aprilian.kumparantest.data.Comment
-import me.aprilian.kumparantest.data.Post
-import me.aprilian.kumparantest.data.User
+import me.aprilian.kumparantest.data.*
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -29,4 +27,14 @@ interface ApiService {
     suspend fun getUser(
         @Path("id") id: Int = 1
     ): Response<User>
+
+    @GET("/users/{userId}/albums")
+    suspend fun getUserAlbums(
+        @Path("userId") userId: Int = 1
+    ): Response<AlbumsResponse>
+
+    @GET("/albums/1/photos")
+    suspend fun getPhotos(
+        @Path("albumId") albumId: Int = 1
+    ): Response<PhotoResponse>
 }
