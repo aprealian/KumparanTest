@@ -39,12 +39,37 @@
             tools:text="This is the description.."
             />
 
+        <TextView
+            android:id="@+id/tvAuthorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{post.user.name}"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/tvBody"
+            tools:text="Lorem Ipsum"
+            />
+
+        <TextView
+            android:id="@+id/tvAuthorCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{post.user.company.name}"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@+id/tvAuthorName"
+            tools:text="This is the description.."
+            />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:background="#6ACACACA"
-            app:layout_constraintTop_toBottomOf="@+id/tvBody"
+            app:layout_constraintTop_toBottomOf="@+id/tvAuthorCompany"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

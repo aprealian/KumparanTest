@@ -1,9 +1,11 @@
 package me.aprilian.kumparantest.data
+import android.os.Parcelable
+import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
-
-class PostResponse : ArrayList<Post>(){}
-
+@Keep
+@Parcelize
 data class Post(
     @SerializedName("id")
     val id: Int,
@@ -12,8 +14,10 @@ data class Post(
     @SerializedName("body")
     val body: String,
     @SerializedName("userId")
-    val userId: Int
-) {
+    val userId: Int,
+    @SerializedName("user")
+    var user: User? = null
+) : Parcelable {
     companion object{
         fun getSample(): ArrayList<Post> {
             return arrayListOf(

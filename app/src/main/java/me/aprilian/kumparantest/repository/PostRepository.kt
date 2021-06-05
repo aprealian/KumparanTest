@@ -7,4 +7,8 @@ class PostRepository @Inject constructor(
     private val apiService: ApiService
 ) {
     suspend fun getPosts(start:Int = 1, limit: Int = 10) = apiService.getPosts(start, limit)
+
+    suspend fun getPost(id:Int = 1) = apiService.getPost(id)
+
+    suspend fun getPostComments(id:Int = 1) = apiService.getPostComments(id)
 }

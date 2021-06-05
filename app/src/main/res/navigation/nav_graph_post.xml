@@ -11,12 +11,19 @@
         android:label="Post List"
         tools:layout="@layout/fragment_post_list">
         <action
-            android:id="@+id/action_home_to_details"
+            android:id="@+id/action_post_list_to_post"
             app:destination="@id/post_dest"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpToSaveState="true"
+            app:restoreState="true">
+            <argument
+                android:name="postId"
+                app:argType="integer"
+                android:defaultValue="0" />
+        </action>
     </fragment>
 
     <fragment
