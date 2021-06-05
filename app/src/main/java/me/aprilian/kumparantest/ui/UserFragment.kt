@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,8 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import me.aprilian.kumparantest.data.AlbumsResponse
-import me.aprilian.kumparantest.data.PhotoResponse
+import me.aprilian.kumparantest.data.Album
+import me.aprilian.kumparantest.data.Photo
 import me.aprilian.kumparantest.data.User
 import me.aprilian.kumparantest.databinding.FragmentUserBinding
 import me.aprilian.kumparantest.databinding.ItemAlbumBinding
@@ -51,9 +50,14 @@ class UserFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        adapter = AlbumAdapter(requireActivity())
+        adapter = AlbumAdapter()
         binding.adapter = adapter
         userViewModel.getAlbums().let { adapter.submitList(it) }
+        adapter.setListener(object: IPhoto{
+            override fun onClickPhoto(photo: Photo) {
+                openPhoto(photo)
+            }
+        })
     }
 
     private fun initObservers() {
@@ -71,6 +75,11 @@ class UserFragment : Fragment() {
             }
         }
     }
+
+    private fun openPhoto(photo: Photo){
+        val bottomSheetDialog: PhotoViewerDialog = PhotoViewerDialog.newInstance(photo)
+        bottomSheetDialog.show(childFragmentManager, "Photo Viewer Dialog")
+    }
 }
 
 @HiltViewModel
@@ -82,9 +91,9 @@ class UserViewModel @Inject constructor(
 
     val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
 
-    private val albums: ArrayList<AlbumsResponse.AlbumsResponseItem> = arrayListOf()
+    private val albums: ArrayList<Album> = arrayListOf()
 
-    fun getAlbums(): ArrayList<AlbumsResponse.AlbumsResponseItem> {
+    fun getAlbums(): ArrayList<Album> {
         return albums
     }
 
@@ -93,23 +102,31 @@ class UserViewModel @Inject constructor(
         userRepository.getUserAlbums(userId).let {
             val result = it.body()
             if (it.isSuccessful && result != null){
-                albums.addAll(result)
+                for (album in result){
+                    getAlbumPhotos(album.id)?.let { list ->
+                        album.photos = list
+                    }
+                    albums.add(album)
+                }
                 isRefreshList.value = true
             }
-            //context.toast("albums "+albums.size)
         }
+    }
+
+    private suspend fun getAlbumPhotos(albumId: Int): ArrayList<Photo>? {
+        return userRepository.getPhotos(albumId).body()
     }
 }
 
-class AlbumAdapter constructor(
-    private val activity: FragmentActivity
-) : ListAdapter<AlbumsResponse.AlbumsResponseItem, AlbumAdapter.AlbumViewHolder>(Companion) {
+class AlbumAdapter : ListAdapter<Album, AlbumAdapter.AlbumViewHolder>(Companion) {
+
+    private var listener: IPhoto? = null
 
     class AlbumViewHolder(val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root)
 
-    companion object: DiffUtil.ItemCallback<AlbumsResponse.AlbumsResponseItem>() {
-        override fun areItemsTheSame(oldItem: AlbumsResponse.AlbumsResponseItem, newItem: AlbumsResponse.AlbumsResponseItem): Boolean = oldItem === newItem
-        override fun areContentsTheSame(oldItem: AlbumsResponse.AlbumsResponseItem, newItem: AlbumsResponse.AlbumsResponseItem): Boolean = oldItem.id == newItem.id
+    companion object: DiffUtil.ItemCallback<Album>() {
+        override fun areItemsTheSame(oldItem: Album, newItem: Album): Boolean = oldItem === newItem
+        override fun areContentsTheSame(oldItem: Album, newItem: Album): Boolean = oldItem.id == newItem.id
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
@@ -124,23 +141,29 @@ class AlbumAdapter constructor(
         holder.binding.album = currentAlbums
         holder.binding.executePendingBindings()
         holder.binding.rvPhoto.addItemDecoration(SpacesItemDecoration(16))
-        val adapter = PhotoAdapter(activity)
+
+        //set photo adapter
+        val adapter = PhotoAdapter()
+        adapter.setListener(listener)
         holder.binding.adapter = adapter
-        PhotoResponse.PhotoItem.getSamples().let { adapter.submitList(it) }
+        adapter.submitList(currentAlbums.photos)
+        //Photo.getSamples().let { adapter.submitList(it) }//testing
+    }
+
+    fun setListener(listener: IPhoto?){
+        this.listener = listener
     }
 }
 
-class PhotoAdapter constructor(
-    private val activity: FragmentActivity
-) : ListAdapter<PhotoResponse.PhotoItem, PhotoAdapter.PhotoViewHolder>(Companion) {
+class PhotoAdapter : ListAdapter<Photo, PhotoAdapter.PhotoViewHolder>(Companion) {
 
-//    private var listener: IPhoto? = null
+    private var listener: IPhoto? = null
 
     class PhotoViewHolder(val binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root)
 
-    companion object: DiffUtil.ItemCallback<PhotoResponse.PhotoItem>() {
-        override fun areItemsTheSame(oldItem: PhotoResponse.PhotoItem, newItem: PhotoResponse.PhotoItem): Boolean = oldItem === newItem
-        override fun areContentsTheSame(oldItem: PhotoResponse.PhotoItem, newItem: PhotoResponse.PhotoItem): Boolean = oldItem.id == newItem.id
+    companion object: DiffUtil.ItemCallback<Photo>() {
+        override fun areItemsTheSame(oldItem: Photo, newItem: Photo): Boolean = oldItem === newItem
+        override fun areContentsTheSame(oldItem: Photo, newItem: Photo): Boolean = oldItem.id == newItem.id
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -156,21 +179,15 @@ class PhotoAdapter constructor(
         holder.binding.ivPhoto.load(currentPhoto.thumbnailUrl)
         holder.binding.executePendingBindings()
         holder.itemView.setOnClickListener {
-//            listener?.onClickPhoto(currentPhoto)
-            openPhoto(activity, currentPhoto)
+            listener?.onClickPhoto(currentPhoto)
         }
     }
 
-//    fun setListener(listener: IPhoto){
-//        this.listener = listener
-//    }
-//
-//    interface IPhoto{
-//        fun onClickPhoto(photo: PhotoResponse.PhotoItem)
-//    }
-
-    private fun openPhoto(activity: FragmentActivity, photo: PhotoResponse.PhotoItem){
-        val bottomSheetDialog: PhotoViewerDialog = PhotoViewerDialog.newInstance(photo)
-        bottomSheetDialog.show(activity.supportFragmentManager, "Bottom Sheet Dialog Fragment")
+    fun setListener(listener: IPhoto?){
+        this.listener = listener
     }
+}
+
+interface IPhoto{
+    fun onClickPhoto(photo: Photo)
 }

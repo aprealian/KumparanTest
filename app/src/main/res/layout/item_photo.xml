@@ -6,7 +6,7 @@
     <data>
         <variable
             name="photo"
-            type="me.aprilian.kumparantest.data.PhotoResponse.PhotoItem" />
+            type="me.aprilian.kumparantest.data.Photo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

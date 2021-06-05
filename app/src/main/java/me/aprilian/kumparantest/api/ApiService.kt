@@ -15,26 +15,26 @@ interface ApiService {
 
     @GET("/posts/{id}")
     suspend fun getPost(
-        @Path("id") id: Int = 1
+        @Path("id") id: Int
     ): Response<Post>
 
     @GET("/posts/{postId}/comments")
     suspend fun getPostComments(
-        @Path("postId") postId: Int = 1
+        @Path("postId") postId: Int
     ): Response<List<Comment>>
 
     @GET("/users/{id}")
     suspend fun getUser(
-        @Path("id") id: Int = 1
+        @Path("id") id: Int
     ): Response<User>
 
     @GET("/users/{userId}/albums")
     suspend fun getUserAlbums(
-        @Path("userId") userId: Int = 1
-    ): Response<AlbumsResponse>
+        @Path("userId") userId: Int
+    ): Response<ArrayList<Album>>
 
-    @GET("/albums/1/photos")
+    @GET("/albums/{albumId}/photos")
     suspend fun getPhotos(
-        @Path("albumId") albumId: Int = 1
-    ): Response<PhotoResponse>
+        @Path("albumId") albumId: Int
+    ): Response<ArrayList<Photo>>
 }
