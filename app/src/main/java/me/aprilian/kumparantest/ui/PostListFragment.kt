@@ -1,6 +1,5 @@
 package me.aprilian.kumparantest.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
@@ -13,17 +12,17 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.internal.ViewUtils.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import me.aprilian.kumparantest.R
 import me.aprilian.kumparantest.data.Post
 import me.aprilian.kumparantest.data.User
 import me.aprilian.kumparantest.databinding.FragmentPostListBinding
 import me.aprilian.kumparantest.databinding.ItemPostBinding
 import me.aprilian.kumparantest.repository.PostRepository
 import me.aprilian.kumparantest.repository.UserRepository
+import me.aprilian.kumparantest.utils.SpacesItemDecoration
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,8 +40,6 @@ class PostListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
         initObserver()
-        //restore list position state
-        binding.rvLatestCoin.layoutManager?.onRestoreInstanceState(postListViewModel.recyclerViewState)
     }
 
     private fun initObserver() {
@@ -53,33 +50,31 @@ class PostListFragment : Fragment() {
 
     private fun initAdapter(){
         adapter = PostAdapter()
-        binding.adapter = adapter
-        postListViewModel.getPosts().let { adapter.submitList(it) }
         adapter.setListener(onClickPost)
+        postListViewModel.getPosts().let { adapter.submitList(it) }
+        binding.adapter = adapter
+        binding.rvPosts.addItemDecoration(SpacesItemDecoration(dpToPx(requireContext(),16).toInt()))
+        //restore list position state
+        binding.rvPosts.layoutManager?.onRestoreInstanceState(postListViewModel.recyclerViewState)
     }
 
     private val onClickPost = object: PostAdapter.IPost{
         override fun clickPost(post: Post) {
-//                requireContext().toast(post.title)
-//                val action = PostListFragmentDirections.actionPostListToPost(post.id)
-//                view?.findNavController()?.navigate(action)
-
-            val bundle = Bundle()
-            bundle.putParcelable("post", post)
-            view?.findNavController()?.navigate(R.id.action_post_list_to_post, bundle)
+            val action = PostListFragmentDirections.actionPostListToPost()
+            action.post = post
+            view?.findNavController()?.navigate(action)
         }
     }
 
     override fun onPause() {
         super.onPause()
         //save recyclerview state and position
-        postListViewModel.recyclerViewState = binding.rvLatestCoin.layoutManager?.onSaveInstanceState()
+        postListViewModel.recyclerViewState = binding.rvPosts.layoutManager?.onSaveInstanceState()
     }
 }
 
 @HiltViewModel
 class PostListViewModel @Inject constructor(
-   @ApplicationContext private val mContext: Context,
    private val postRepository: PostRepository,
    private val userRepository: UserRepository
 ): ViewModel(){

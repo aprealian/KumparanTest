@@ -11,9 +11,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.internal.ViewUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -29,13 +32,18 @@ import me.aprilian.kumparantest.utils.SpacesItemDecoration
 import me.aprilian.kumparantest.utils.extension.load
 import javax.inject.Inject
 
-const val ARG_USER = "user"
-
 @AndroidEntryPoint
 class UserFragment : Fragment() {
+
+    private val args: UserFragmentArgs by navArgs()
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var binding: FragmentUserBinding
     private lateinit var adapter: AlbumAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        userViewModel.user = args.user
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentUserBinding.inflate(layoutInflater)
@@ -44,13 +52,27 @@ class UserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initArgs()
+        initViews()
         initAdapter()
         initObservers()
+        initListener()
+        loadData()
+    }
+
+    private fun initViews() {
+        userViewModel.user?.let {
+            binding.user = it
+        }
+    }
+
+    private fun initListener(){
+        binding.buttonBack.setOnClickListener {
+            view?.findNavController()?.navigateUp()
+        }
     }
 
     private fun initAdapter() {
-        adapter = AlbumAdapter()
+        adapter = AlbumAdapter(requireContext())
         binding.adapter = adapter
         userViewModel.getAlbums().let { adapter.submitList(it) }
         adapter.setListener(object: IPhoto{
@@ -60,25 +82,22 @@ class UserFragment : Fragment() {
         })
     }
 
-    private fun initObservers() {
-        userViewModel.isRefreshList.observe(viewLifecycleOwner, Observer {
-            adapter.notifyDataSetChanged()
-        })
-    }
-
-    private fun initArgs() {
-        arguments?.let { bundle ->
-            userViewModel.user = bundle.getParcelable(ARG_USER) as User?
-            userViewModel.user?.let {
-                binding.user = it
-                userViewModel.loadAlbums(it.id)
-            }
-        }
-    }
-
     private fun openPhoto(photo: Photo){
         val bottomSheetDialog: PhotoViewerDialog = PhotoViewerDialog.newInstance(photo)
         bottomSheetDialog.show(childFragmentManager, "Photo Viewer Dialog")
+    }
+
+    private fun initObservers() {
+        userViewModel.isRefreshList.observe(viewLifecycleOwner, Observer {
+            adapter.notifyDataSetChanged()
+            binding.tvAlbumCount.text = "Albums (${adapter.itemCount})"
+        })
+    }
+
+    private fun loadData() {
+        userViewModel.user?.id?.let {
+            userViewModel.loadAlbums(it)
+        }
     }
 }
 
@@ -118,7 +137,9 @@ class UserViewModel @Inject constructor(
     }
 }
 
-class AlbumAdapter : ListAdapter<Album, AlbumAdapter.AlbumViewHolder>(Companion) {
+class AlbumAdapter constructor(
+    private val context: Context
+) : ListAdapter<Album, AlbumAdapter.AlbumViewHolder>(Companion) {
 
     private var listener: IPhoto? = null
 
@@ -144,9 +165,10 @@ class AlbumAdapter : ListAdapter<Album, AlbumAdapter.AlbumViewHolder>(Companion)
 
         //set photo adapter
         val adapter = PhotoAdapter()
+        adapter.submitList(currentAlbums.photos)
         adapter.setListener(listener)
         holder.binding.adapter = adapter
-        adapter.submitList(currentAlbums.photos)
+        holder.binding.rvPhoto.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPx(context,16).toInt()))
         //Photo.getSamples().let { adapter.submitList(it) }//testing
     }
 

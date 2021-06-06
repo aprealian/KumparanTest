@@ -18,14 +18,33 @@
         tools:paddingHorizontal="16dp">
 
         <TextView
-            android:id="@+id/tvAlbumTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/tvAlbumTotalPhoto"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginTop="16dp"
-            android:text="@{album.title}"
+            android:gravity="center"
+            android:background="@drawable/bg_rounded"
+            android:text="@{Integer.toString(album.photos.size())}"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="50"
+            />
+
+        <TextView
+            android:id="@+id/tvAlbumTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@{album.title}"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@+id/tvAlbumTotalPhoto"
+            app:layout_constraintStart_toEndOf="@+id/tvAlbumTotalPhoto"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tvAlbumTotalPhoto"
             tools:text="Lorem Ipsum"
             />
 
@@ -35,18 +54,19 @@
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/tvAlbumTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvAlbumTotalPhoto"
             app:setAdapter="@{adapter}"
             app:spanCount="2"
             tools:itemCount="4"
             tools:listitem="@layout/item_photo"
+            tools:layout_marginTop="16dp"
             />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
-            android:background="#6ACACACA"
+            android:background="#45CACACA"
             app:layout_constraintTop_toBottomOf="@+id/rvPhoto"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
