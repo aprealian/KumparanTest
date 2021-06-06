@@ -1,8 +1,9 @@
-package me.aprilian.kumparantest
+package me.aprilian.kumparantest.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
+import me.aprilian.kumparantest.R
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

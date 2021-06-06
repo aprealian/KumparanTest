@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.data.Album
 import me.aprilian.kumparantest.data.Photo
 import me.aprilian.kumparantest.data.User
@@ -119,8 +120,8 @@ class UserViewModel @Inject constructor(
     fun loadAlbums(userId: Int?) = viewModelScope.launch {
         userId ?: return@launch
         userRepository.getUserAlbums(userId).let {
-            val result = it.body()
-            if (it.isSuccessful && result != null){
+            val result = it.data
+            if (it.status == Resource.Status.SUCCESS && result != null){
                 for (album in result){
                     getAlbumPhotos(album.id)?.let { list ->
                         album.photos = list
@@ -133,7 +134,7 @@ class UserViewModel @Inject constructor(
     }
 
     private suspend fun getAlbumPhotos(albumId: Int): ArrayList<Photo>? {
-        return userRepository.getPhotos(albumId).body()
+        return userRepository.getPhotos(albumId).data
     }
 }
 

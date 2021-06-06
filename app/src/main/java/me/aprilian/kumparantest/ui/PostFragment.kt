@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.data.Comment
 import me.aprilian.kumparantest.data.Post
 import me.aprilian.kumparantest.data.User
@@ -111,8 +112,8 @@ class PostViewModel @Inject constructor(
 
     fun loadComments(postId: Int) = viewModelScope.launch {
         postRepository.getPostComments(postId).let {
-            val result = it.body()
-            if (it.isSuccessful && result != null){
+            val result = it.data
+            if (it.status == Resource.Status.SUCCESS && result != null){
                 comments.addAll(result)
                 isRefreshList.value = true
             }

@@ -1,5 +1,6 @@
 package me.aprilian.kumparantest.di
 
+import android.app.Application
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +23,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient() = if (BuildConfig.DEBUG){
+    fun provideOkHttpClient(application: Application) = if (BuildConfig.DEBUG){
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()

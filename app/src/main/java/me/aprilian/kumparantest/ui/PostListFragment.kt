@@ -16,6 +16,7 @@ import com.google.android.material.internal.ViewUtils.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.data.Post
 import me.aprilian.kumparantest.data.User
 import me.aprilian.kumparantest.databinding.FragmentPostListBinding
@@ -89,8 +90,8 @@ class PostListViewModel @Inject constructor(
 
     private fun loadPosts() = viewModelScope.launch {
         postRepository.getPosts(1, 10).let {
-            if (it.isSuccessful){
-                it.body()?.let { list ->
+            if (it.status == Resource.Status.SUCCESS){
+                it.data?.let { list ->
                     val refreshEvery = 10
                     var counter = 0
 
@@ -114,7 +115,7 @@ class PostListViewModel @Inject constructor(
     }
 
     private suspend fun getUser(userId: Int): User? {
-        return userRepository.getUser(userId).body()
+        return userRepository.getUser(userId).data
     }
 
     init {
