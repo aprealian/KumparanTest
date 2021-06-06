@@ -20,9 +20,10 @@
             app:popUpToSaveState="true"
             app:restoreState="true">
             <argument
-                android:name="postId"
-                app:argType="integer"
-                android:defaultValue="0" />
+                android:name="post"
+                android:defaultValue="@null"
+                app:argType="me.aprilian.kumparantest.data.Post"
+                app:nullable="true" />
         </action>
     </fragment>
 
@@ -31,6 +32,11 @@
         android:name="me.aprilian.kumparantest.ui.PostFragment"
         android:label="Post"
         tools:layout="@layout/fragment_post">
+        <argument
+            android:name="post"
+            android:defaultValue="@null"
+            app:argType="me.aprilian.kumparantest.data.Post"
+            app:nullable="true" />
         <action
             android:id="@+id/action_post_to_user"
             app:destination="@id/user_dest"
@@ -41,9 +47,10 @@
             app:popUpToSaveState="true"
             app:restoreState="true">
             <argument
-                android:name="userId"
-                app:argType="integer"
-                android:defaultValue="0" />
+                android:name="user"
+                android:defaultValue="@null"
+                app:argType="me.aprilian.kumparantest.data.User"
+                app:nullable="true" />
         </action>
     </fragment>
 
@@ -51,6 +58,12 @@
         android:id="@+id/user_dest"
         android:name="me.aprilian.kumparantest.ui.UserFragment"
         android:label="user"
-        tools:layout="@layout/fragment_user" />
+        tools:layout="@layout/fragment_user">
+        <argument
+            android:name="user"
+            android:defaultValue="@null"
+            app:argType="me.aprilian.kumparantest.data.User"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

@@ -14,44 +14,105 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@color/white">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="16dp">
 
+            <ImageView
+                android:id="@+id/buttonBack"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_back"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/tvAuthorNameSymbol"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="A"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:background="@drawable/bg_circle"
+                app:layout_constraintTop_toBottomOf="@+id/buttonBack"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
             <TextView
                 android:id="@+id/tvUserName"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:gravity="center"
                 android:text="@{user.name}"
                 android:textColor="@color/purple_200"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tvAuthorNameSymbol"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Lorem Ipsum"
+                />
+
+            <TextView
+                android:id="@+id/tvUserEmailTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/email"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Lorem Ipsum"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserName"
                 />
 
             <TextView
                 android:id="@+id/tvUserEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:text="@{user.email}"
-                android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserName"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserEmailTitle"
                 tools:text="Lorem Ipsum"
+                />
+
+            <TextView
+                android:id="@+id/tvUserAddressTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/address"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserEmail"
                 />
 
             <TextView
                 android:id="@+id/tvUserAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@{user.address.street}"
-                android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserEmail"
+                android:text="@{user.address.street+' '+user.address.city+' '+user.address.zipcode}"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserAddressTitle"
+                tools:text="This is the description.."
+                />
+
+            <TextView
+                android:id="@+id/tvUserCompanyTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/company"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserAddress"
                 tools:text="This is the description.."
                 />
 
@@ -59,10 +120,9 @@
                 android:id="@+id/tvUserCompany"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
                 android:text="@{user.company.name}"
-                android:textSize="12sp"
-                app:layout_constraintTop_toBottomOf="@+id/tvUserAddress"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@+id/tvUserCompanyTitle"
                 tools:text="This is the description.."
                 />
 
@@ -71,8 +131,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="16dp"
-                android:background="#6ACACACA"
+                android:background="#45CACACA"
                 app:layout_constraintTop_toBottomOf="@+id/tvUserCompany"
+                />
+
+            <TextView
+                android:id="@+id/tvAlbumCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="14sp"
+                android:text="@string/albums"
+                app:layout_constraintTop_toBottomOf="@+id/line"
+                tools:text="Albums (56)"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -82,7 +153,7 @@
                 android:nestedScrollingEnabled="false"
                 app:setAdapter="@{adapter}"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/line"
+                app:layout_constraintTop_toBottomOf="@+id/tvAlbumCount"
                 tools:itemCount="3"
                 tools:listitem="@layout/item_album"
                 />
