@@ -1,5 +1,6 @@
 package me.aprilian.kumparantest.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.data.Comment
@@ -27,6 +29,7 @@ import me.aprilian.kumparantest.databinding.ItemCommentBinding
 import me.aprilian.kumparantest.repository.PostRepository
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
 import me.aprilian.kumparantest.utils.Utils
+import me.aprilian.kumparantest.utils.Utils.toast
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -75,6 +78,10 @@ class PostFragment : Fragment() {
             adapter.notifyDataSetChanged()
             binding.tvCommentCount.text = "Comments (${adapter.itemCount})"
         })
+
+        postViewModel.message.observe(viewLifecycleOwner, Observer { message ->
+            requireContext().toast(message)
+        })
     }
 
     private fun initViews() {
@@ -94,11 +101,13 @@ class PostFragment : Fragment() {
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val postRepository: PostRepository
 ): ViewModel(){
     var post: Post? = null
 
     val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
+    val message: MutableLiveData<String> = MutableLiveData()
 
     private val comments: ArrayList<Comment> = arrayListOf()
 
@@ -116,6 +125,8 @@ class PostViewModel @Inject constructor(
             if (it.status == Resource.Status.SUCCESS && result != null){
                 comments.addAll(result)
                 isRefreshList.value = true
+            } else if (it.status == Resource.Status.ERROR) {
+                message.value = Resource.getErrorMessageToUser(context, it.message)
             }
         }
     }

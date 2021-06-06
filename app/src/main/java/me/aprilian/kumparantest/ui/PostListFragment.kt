@@ -1,5 +1,6 @@
 package me.aprilian.kumparantest.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.fragment.app.Fragment
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.internal.ViewUtils.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.data.Post
@@ -24,6 +26,7 @@ import me.aprilian.kumparantest.databinding.ItemPostBinding
 import me.aprilian.kumparantest.repository.PostRepository
 import me.aprilian.kumparantest.repository.UserRepository
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
+import me.aprilian.kumparantest.utils.Utils.toast
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -76,6 +79,7 @@ class PostListFragment : Fragment() {
 
 @HiltViewModel
 class PostListViewModel @Inject constructor(
+   @ApplicationContext private val context: Context,
    private val postRepository: PostRepository,
    private val userRepository: UserRepository
 ): ViewModel(){
@@ -108,8 +112,22 @@ class PostListViewModel @Inject constructor(
                             counter = 0
                         }
                     }
+
+                    //save to cache
+                    postRepository.savePosts(posts)
+
                     isRefreshList.value = true
                 }
+            } else if (it.status == Resource.Status.ERROR && Resource.isNoInternetConnection(it.message)) {
+                context.toast("No internet connection")
+
+                //load from cache
+                postRepository.getPostsFromDb()?.let { list ->
+                    posts.clear()
+                    posts.addAll(list)
+                }
+
+                isRefreshList.value = true
             }
         }
     }

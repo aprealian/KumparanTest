@@ -22,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.aprilian.kumparantest.api.Resource
+import me.aprilian.kumparantest.api.Resource.Companion.getErrorMessageToUser
 import me.aprilian.kumparantest.data.Album
 import me.aprilian.kumparantest.data.Photo
 import me.aprilian.kumparantest.data.User
@@ -30,6 +31,7 @@ import me.aprilian.kumparantest.databinding.ItemAlbumBinding
 import me.aprilian.kumparantest.databinding.ItemPhotoBinding
 import me.aprilian.kumparantest.repository.UserRepository
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
+import me.aprilian.kumparantest.utils.Utils.toast
 import me.aprilian.kumparantest.utils.extension.load
 import javax.inject.Inject
 
@@ -93,6 +95,10 @@ class UserFragment : Fragment() {
             adapter.notifyDataSetChanged()
             binding.tvAlbumCount.text = "Albums (${adapter.itemCount})"
         })
+
+        userViewModel.message.observe(viewLifecycleOwner, Observer { message ->
+            requireContext().toast(message)
+        })
     }
 
     private fun loadData() {
@@ -110,6 +116,7 @@ class UserViewModel @Inject constructor(
     var user: User? = null
 
     val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
+    val message: MutableLiveData<String> = MutableLiveData()
 
     private val albums: ArrayList<Album> = arrayListOf()
 
@@ -129,6 +136,8 @@ class UserViewModel @Inject constructor(
                     albums.add(album)
                 }
                 isRefreshList.value = true
+            } else if (it.status == Resource.Status.ERROR) {
+                message.value = getErrorMessageToUser(context, it.message)
             }
         }
     }
