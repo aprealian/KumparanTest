@@ -1,4 +1,4 @@
-package me.aprilian.kumparantest.db
+package me.aprilian.kumparantest.datasource.local
 
 import android.content.Context
 import android.content.SharedPreferences

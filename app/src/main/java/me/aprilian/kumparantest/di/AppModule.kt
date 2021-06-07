@@ -5,7 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.aprilian.kumparantest.BuildConfig
-import me.aprilian.kumparantest.api.ApiService
+import me.aprilian.kumparantest.datasource.api.ApiService
 import me.aprilian.kumparantest.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

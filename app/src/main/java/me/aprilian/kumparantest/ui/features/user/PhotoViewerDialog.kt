@@ -9,8 +9,6 @@ import me.aprilian.kumparantest.data.Photo
 import me.aprilian.kumparantest.databinding.DialogPhotoViewerBinding
 import me.aprilian.kumparantest.utils.extension.load
 
-const val ARG_PHOTO = "photo"
-
 class PhotoViewerDialog : DialogFragment() {
 
     private lateinit var binding: DialogPhotoViewerBinding
@@ -39,6 +37,8 @@ class PhotoViewerDialog : DialogFragment() {
     }
 
     companion object {
+        const val ARG_PHOTO = "photo"
+
         fun newInstance(photo: Photo): PhotoViewerDialog {
             val dialog = PhotoViewerDialog()
             val args = Bundle()
