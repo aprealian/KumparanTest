@@ -4,9 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="photo"
             type="me.aprilian.kumparantest.data.Photo" />
+        <variable
+            name="photoState"
+            type="me.aprilian.kumparantest.ui.PhotoAdapter.PhotoState" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -28,10 +32,11 @@
             android:layout_height="match_parent"
             android:background="#B2070A0C"
             android:gravity="center"
+            android:text="@{`+`+ String.valueOf(photoState.moreItem)}"
             android:textStyle="bold"
             android:textSize="28sp"
             android:textColor="@color/white"
-            android:visibility="gone"
+            android:visibility="@{photoState.latestCounter ? View.VISIBLE : View.GONE}"
             tools:text="50"
             />
     </androidx.cardview.widget.CardView>

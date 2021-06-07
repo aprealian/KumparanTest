@@ -79,7 +79,7 @@ class PostFragment : BaseFragment() {
 
     fun openUser(view: View?, user: User?){
         if (view == null || user == null) return
-        val action = PostFragmentDirections.actionPostToUser().apply { this.user = user }
+        val action = PostFragmentDirections.actionPostToUser().apply { this.userId = user.id }
         view.findNavController().navigate(action)
     }
 }
