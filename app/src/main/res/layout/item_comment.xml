@@ -21,10 +21,11 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/bg_circle"
             android:gravity="center"
-            android:text="A"
+            android:text="@{String.valueOf(comment.name.charAt(0)).toUpperCase()}"
             android:textColor="@color/white"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            tools:text="A"
             />
 
         <LinearLayout

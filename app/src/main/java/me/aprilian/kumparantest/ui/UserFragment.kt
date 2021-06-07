@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import me.aprilian.kumparantest.R
 import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.api.Resource.Companion.getErrorMessageToUser
 import me.aprilian.kumparantest.data.Album
@@ -50,6 +51,8 @@ class UserFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentUserBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = userViewModel
         return binding.root
     }
 
@@ -93,7 +96,6 @@ class UserFragment : Fragment() {
     private fun initObservers() {
         userViewModel.isRefreshList.observe(viewLifecycleOwner, Observer {
             adapter.notifyDataSetChanged()
-            binding.tvAlbumCount.text = "Albums (${adapter.itemCount})"
         })
 
         userViewModel.message.observe(viewLifecycleOwner, Observer { message ->
@@ -115,10 +117,12 @@ class UserViewModel @Inject constructor(
 ): ViewModel(){
     var user: User? = null
 
+    private val albums: ArrayList<Album> = arrayListOf()
+    val totalAlbums: MutableLiveData<Int> = MutableLiveData()
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isAlbumNotFound: MutableLiveData<Boolean> = MutableLiveData()
     val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
     val message: MutableLiveData<String> = MutableLiveData()
-
-    private val albums: ArrayList<Album> = arrayListOf()
 
     fun getAlbums(): ArrayList<Album> {
         return albums
@@ -126,6 +130,7 @@ class UserViewModel @Inject constructor(
 
     fun loadAlbums(userId: Int?) = viewModelScope.launch {
         userId ?: return@launch
+        isLoading.value = true
         userRepository.getUserAlbums(userId).let {
             val result = it.data
             if (it.status == Resource.Status.SUCCESS && result != null){
@@ -135,11 +140,14 @@ class UserViewModel @Inject constructor(
                     }
                     albums.add(album)
                 }
+                totalAlbums.value = albums.size
+                isAlbumNotFound.value = albums.isNullOrEmpty()
                 isRefreshList.value = true
             } else if (it.status == Resource.Status.ERROR) {
                 message.value = getErrorMessageToUser(context, it.message)
             }
         }
+        isLoading.value = false
     }
 
     private suspend fun getAlbumPhotos(albumId: Int): ArrayList<Photo>? {
@@ -190,6 +198,7 @@ class AlbumAdapter constructor(
 class PhotoAdapter : ListAdapter<Photo, PhotoAdapter.PhotoViewHolder>(Companion) {
 
     private var listener: IPhoto? = null
+    private val maxPhotos = 6
 
     class PhotoViewHolder(val binding: ItemPhotoBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -207,12 +216,31 @@ class PhotoAdapter : ListAdapter<Photo, PhotoAdapter.PhotoViewHolder>(Companion)
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         val currentPhoto = getItem(position)
+        val isLatestCounter = (position >= maxPhotos-1)
+
         holder.binding.photo = currentPhoto
         holder.binding.ivPhoto.load(currentPhoto.thumbnailUrl)
-        holder.binding.executePendingBindings()
         holder.itemView.setOnClickListener {
-            listener?.onClickPhoto(currentPhoto)
+            val context = holder.binding.root.context
+            if (!isLatestCounter) listener?.onClickPhoto(currentPhoto) else context.toast(context.getString(R.string.coming_soon))
         }
+
+        //check is latest counter
+        if (isLatestCounter){
+            holder.binding.tvPhotosCounter.apply {
+                val moreCounter = currentList.size-(maxPhotos-1)
+                text = "+${moreCounter}"
+                visibility = View.VISIBLE
+            }
+        } else {
+            holder.binding.tvPhotosCounter.visibility = View.GONE
+        }
+
+        holder.binding.executePendingBindings()
+    }
+
+    override fun getItemCount(): Int {
+        return if (currentList.size > maxPhotos) maxPhotos else currentList.size
     }
 
     fun setListener(listener: IPhoto?){

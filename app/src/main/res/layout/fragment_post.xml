@@ -13,12 +13,14 @@
         <variable
             name="vm"
             type="me.aprilian.kumparantest.ui.PostViewModel" />
+        <import type="android.view.View"/>
     </data>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F9F9FB">
+        android:background="@color/background_page">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -128,8 +130,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="16dp"
+                    android:text="@{vm.totalComments > 0 ? @string/comments+` (`+String.valueOf(vm.totalComments)+`) ` : @string/comments}"
                     android:textSize="14sp"
-                    android:text="@string/comments"
                     app:layout_constraintTop_toBottomOf="@+id/line"
                     app:layout_constraintBottom_toBottomOf="parent"
                     tools:text="Comments (56)"
@@ -147,6 +149,32 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/item_comment"
                 />
+
+            <androidx.core.widget.ContentLoadingProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginVertical="16dp"
+                android:visibility="@{vm.isLoading ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@+id/rvComments"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/tvNotFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:text="@string/album_not_found"
+                android:visibility="@{vm.isCommentsNotFound ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@+id/progressBar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

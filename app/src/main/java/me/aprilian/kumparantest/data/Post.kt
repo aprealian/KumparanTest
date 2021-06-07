@@ -8,13 +8,13 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Post(
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("title")
-    val title: String,
+    val title: String = "",
     @SerializedName("body")
-    val body: String,
+    val body: String = "",
     @SerializedName("userId")
-    val userId: Int,
+    val userId: Int = 0,
     @SerializedName("user")
     var user: User? = null
 ) : Parcelable {
@@ -26,6 +26,13 @@ data class Post(
                 Post(id = 3, title = "Lorem ipsum 3", body = "This is the body", userId = 1),
                 Post(id = 4, title = "Lorem ipsum 4", body = "This is the body", userId = 1),
             )
+        }
+        fun createList(count: Int): ArrayList<Post> {
+            val list = arrayListOf<Post>()
+            for (i in 1..count) {
+                list.add(Post())
+            }
+            return list
         }
     }
 }

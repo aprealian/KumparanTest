@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import me.aprilian.kumparantest.R
 import me.aprilian.kumparantest.api.Resource
 import me.aprilian.kumparantest.data.Comment
 import me.aprilian.kumparantest.data.Post
@@ -47,6 +48,8 @@ class PostFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPostBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = postViewModel
         return binding.root
     }
 
@@ -69,14 +72,12 @@ class PostFragment : Fragment() {
         adapter = CommentsAdapter()
         postViewModel.getComments().let { adapter.submitList(it) }
         binding.adapter = adapter
-        binding.vm = postViewModel
         binding.rvComments.addItemDecoration(SpacesItemDecoration(Utils.dpToPx(requireContext(),16.0f).toInt()))
     }
 
     private fun initObserver() {
         postViewModel.isRefreshList.observe(viewLifecycleOwner, Observer {
             adapter.notifyDataSetChanged()
-            binding.tvCommentCount.text = "Comments (${adapter.itemCount})"
         })
 
         postViewModel.message.observe(viewLifecycleOwner, Observer { message ->
@@ -105,11 +106,12 @@ class PostViewModel @Inject constructor(
     private val postRepository: PostRepository
 ): ViewModel(){
     var post: Post? = null
-
+    private val comments: ArrayList<Comment> = arrayListOf()
+    val totalComments: MutableLiveData<Int> = MutableLiveData()
+    val isLoading: MutableLiveData<Boolean> = MutableLiveData()
+    val isCommentsNotFound: MutableLiveData<Boolean> = MutableLiveData()
     val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
     val message: MutableLiveData<String> = MutableLiveData()
-
-    private val comments: ArrayList<Comment> = arrayListOf()
 
     init {
         post?.id?.let { loadComments(it) }
@@ -120,15 +122,19 @@ class PostViewModel @Inject constructor(
     }
 
     fun loadComments(postId: Int) = viewModelScope.launch {
+        isLoading.value = true
         postRepository.getPostComments(postId).let {
             val result = it.data
             if (it.status == Resource.Status.SUCCESS && result != null){
                 comments.addAll(result)
+                totalComments.value = comments.size
+                isCommentsNotFound.value = comments.isNullOrEmpty()
                 isRefreshList.value = true
             } else if (it.status == Resource.Status.ERROR) {
                 message.value = Resource.getErrorMessageToUser(context, it.message)
             }
         }
+        isLoading.value = false
     }
 
     fun openUser(view: View, user: User){

@@ -4,8 +4,8 @@ import android.content.Context
 import android.widget.Toast
 
 object Utils {
-    fun Context.toast(message: String, duration: Int = Toast.LENGTH_SHORT){
-        Toast.makeText(this, message, duration).show()
+    fun Context.toast(message: String?, duration: Int = Toast.LENGTH_SHORT){
+        message?.let { Toast.makeText(this, it, duration).show() }
     }
 
     fun pxToDp(context: Context, px: Float): Float {
