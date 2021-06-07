@@ -9,10 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.internal.ViewUtils
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.aprilian.kumparantest.R
 import me.aprilian.kumparantest.data.*
@@ -23,6 +21,7 @@ import me.aprilian.kumparantest.repository.UserRepository
 import me.aprilian.kumparantest.ui.base.BaseFragment
 import me.aprilian.kumparantest.ui.base.BaseRVAdapter
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
+import me.aprilian.kumparantest.utils.Utils.dpToPx
 import me.aprilian.kumparantest.utils.Utils.toast
 import me.aprilian.kumparantest.utils.extension.load
 import javax.inject.Inject
@@ -75,7 +74,7 @@ class UserFragment : BaseFragment() {
     }
 
     private fun updateAlbumsData(data: Resource<List<Album>>?) {
-        if (data == null) return
+        if (binding.rvAlbums.adapter == null || data == null) return
         (binding.rvAlbums.adapter as AlbumAdapter).submitData(data)
     }
 
@@ -87,7 +86,6 @@ class UserFragment : BaseFragment() {
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val userRepository: UserRepository
 ): ViewModel(){
     var userId: Int? = null
@@ -140,9 +138,8 @@ class AlbumAdapter(ctx: Context?, resource: Resource<List<Album>>, private val c
             //set binding
             binding.also {
                 it.album = album
-                it.rvPhoto.addItemDecoration(SpacesItemDecoration(16))
                 it.adapter = adapter
-                it.rvPhoto.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPx(binding.root.context,16).toInt()))
+                it.rvPhoto.addItemDecoration(SpacesItemDecoration(dpToPx(binding.root.context,16f).toInt()))
                 it.executePendingBindings()
             }
         }

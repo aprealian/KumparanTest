@@ -8,15 +8,20 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import me.aprilian.kumparantest.R
 import me.aprilian.kumparantest.data.Resource
+import java.lang.Exception
 
-abstract class BaseRVAdapter<T>(val ctx: Context?, var resource: Resource<List<T>>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class BaseRVAdapter<T>(val ctx: Context?, var resource: Resource<List<T>>, private val loadingLayout: Int = R.layout.state_loading) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     protected abstract fun createDataViewHolder(parent: ViewGroup): RecyclerView.ViewHolder
 
     open var errorMessage = "Failed to load data"
 
     open fun createLoadingViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return LoadingItem(LayoutInflater.from(parent.context).inflate(R.layout.state_loading, parent, false))
+        return try {
+            LoadingItem(LayoutInflater.from(parent.context).inflate(loadingLayout, parent, false))
+        } catch (e: Exception){
+            LoadingItem(LayoutInflater.from(parent.context).inflate(R.layout.state_loading, parent, false))
+        }
     }
 
     open fun createErrorViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
@@ -30,6 +35,18 @@ abstract class BaseRVAdapter<T>(val ctx: Context?, var resource: Resource<List<T
     fun submitData(data: Resource<List<T>>?) {
         data?.let {
             resource = it
+            notifyDataSetChanged()
+            if (data.status == Resource.Status.ERROR) {
+                Toast.makeText(ctx, errorMessage, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun addData(data: Resource<List<T>>?) {
+        data?.let {
+            val list = resource.data?.toMutableList() ?: arrayListOf()
+            it.data?.let { list.addAll(it) }
+            resource = Resource(Resource.Status.SUCCESS, list, "")
             notifyDataSetChanged()
             if (data.status == Resource.Status.ERROR) {
                 Toast.makeText(ctx, errorMessage, Toast.LENGTH_SHORT).show()
