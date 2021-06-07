@@ -1,6 +1,7 @@
 package me.aprilian.kumparantest.api
 
 import android.util.Log
+import me.aprilian.kumparantest.data.Resource
 import retrofit2.Response
 
 abstract class BaseDataSource {

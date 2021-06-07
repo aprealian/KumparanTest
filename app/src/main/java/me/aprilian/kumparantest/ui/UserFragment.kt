@@ -22,8 +22,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.aprilian.kumparantest.R
-import me.aprilian.kumparantest.api.Resource
-import me.aprilian.kumparantest.api.Resource.Companion.getErrorMessageToUser
+import me.aprilian.kumparantest.data.Resource
+import me.aprilian.kumparantest.data.Resource.Companion.getErrorMessageToUser
 import me.aprilian.kumparantest.data.Album
 import me.aprilian.kumparantest.data.Photo
 import me.aprilian.kumparantest.data.User
@@ -46,29 +46,23 @@ class UserFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userViewModel.user = args.user
+        userViewModel.setUser(args.user)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentUserBinding.inflate(layoutInflater)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = userViewModel
+        userViewModel.getUser()?.let { binding.user = it }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
         initAdapter()
         initObservers()
         initListener()
         loadData()
-    }
-
-    private fun initViews() {
-        userViewModel.user?.let {
-            binding.user = it
-        }
     }
 
     private fun initListener(){
@@ -104,7 +98,7 @@ class UserFragment : Fragment() {
     }
 
     private fun loadData() {
-        userViewModel.user?.id?.let {
+        userViewModel.getUser()?.id?.let {
             userViewModel.loadAlbums(it)
         }
     }
@@ -115,7 +109,9 @@ class UserViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val userRepository: UserRepository
 ): ViewModel(){
-    var user: User? = null
+    private var user: User? = null
+    fun getUser(): User? { return user }
+    fun setUser(user: User?) { this.user = user }
 
     private val albums: ArrayList<Album> = arrayListOf()
     val totalAlbums: MutableLiveData<Int> = MutableLiveData()
@@ -177,17 +173,20 @@ class AlbumAdapter constructor(
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         val currentAlbums = getItem(position)
-        holder.binding.album = currentAlbums
-        holder.binding.executePendingBindings()
-        holder.binding.rvPhoto.addItemDecoration(SpacesItemDecoration(16))
 
         //set photo adapter
         val adapter = PhotoAdapter()
         adapter.submitList(currentAlbums.photos)
         adapter.setListener(listener)
-        holder.binding.adapter = adapter
-        holder.binding.rvPhoto.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPx(context,16).toInt()))
-        //Photo.getSamples().let { adapter.submitList(it) }//testing
+
+        //set binding
+        holder.binding.also {
+            it.album = currentAlbums
+            it.rvPhoto.addItemDecoration(SpacesItemDecoration(16))
+            it.adapter = adapter
+            it.rvPhoto.addItemDecoration(SpacesItemDecoration(ViewUtils.dpToPx(context,16).toInt()))
+            it.executePendingBindings()
+        }
     }
 
     fun setListener(listener: IPhoto?){

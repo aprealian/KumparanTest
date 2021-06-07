@@ -2,7 +2,6 @@ package me.aprilian.kumparantest.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import me.aprilian.kumparantest.api.Resource
+import me.aprilian.kumparantest.data.Resource
 import me.aprilian.kumparantest.data.Post
 import me.aprilian.kumparantest.data.User
 import me.aprilian.kumparantest.databinding.FragmentPostListBinding
@@ -66,9 +65,6 @@ class PostListFragment : Fragment() {
         postListViewModel.getPosts().let { adapter.submitList(it) }
         binding.adapter = adapter
         binding.rvPosts.addItemDecoration(SpacesItemDecoration(dpToPx(requireContext(),16).toInt()))
-
-        //restore list position state
-        binding.rvPosts.layoutManager?.onRestoreInstanceState(postListViewModel.recyclerViewState)
     }
 
     private val onClickPost = object: PostAdapter.IPost{
@@ -78,12 +74,6 @@ class PostListFragment : Fragment() {
             view?.findNavController()?.navigate(action)
         }
     }
-
-    override fun onPause() {
-        super.onPause()
-        //save recyclerview state and position
-        postListViewModel.recyclerViewState = binding.rvPosts.layoutManager?.onSaveInstanceState()
-    }
 }
 
 @HiltViewModel
@@ -92,11 +82,10 @@ class PostListViewModel @Inject constructor(
    private val postRepository: PostRepository,
    private val userRepository: UserRepository
 ): ViewModel(){
-    val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
-    val message: MutableLiveData<String> = MutableLiveData()
-    var recyclerViewState: Parcelable? = null //save recyclerView state
 
     private val posts: ArrayList<Post> = arrayListOf()
+    val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
+    val message: MutableLiveData<String> = MutableLiveData()
 
     fun getPosts(): ArrayList<Post> {
         return posts
