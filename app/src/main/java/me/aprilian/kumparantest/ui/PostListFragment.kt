@@ -109,27 +109,28 @@ class PostListViewModel @Inject constructor(
                 Resource.Status.SUCCESS -> {
                     it.data?.let { list ->
                         val refreshEvery = 10
-                        var counter = 0
+                        val tempItems: ArrayList<Post> = arrayListOf()
 
                         for (post in list){
                             //getting user data
                             val user = getUser(post.userId)
                             post.user = user
-                            //posts.add(post)
-                            addItemBeforeLoadingItem(post)
-                            counter++
+                            tempItems.add(post)
 
                             //check condition to refresh list
-                            if (counter >= refreshEvery){
+                            if (tempItems.size >= refreshEvery){
+                                addItemsBeforeLoadingItem(tempItems)
+                                tempItems.clear()
                                 isRefreshList.value = true
-                                counter = 0
                             }
                         }
 
+                        //add recent items
+                        addItemsBeforeLoadingItem(tempItems)
+                        isRefreshList.value = true
+
                         //save to cache
                         postRepository.savePosts(posts)
-
-                        isRefreshList.value = true
                     }
                 }
                 else -> {
@@ -150,13 +151,14 @@ class PostListViewModel @Inject constructor(
         hideLoading()
     }
 
-    private fun addItemBeforeLoadingItem(item: Post){
+    private fun addItemsBeforeLoadingItem(items: List<Post>){
         val index = posts.indexOfFirst { it.id == 0 }
-        if (index >= 0) posts.add(index, item) else posts.add(item)
+        if (index >= 0) posts.addAll(index, items) else posts.addAll(items)
     }
 
     private fun showLoading(){
-        posts.addAll(Post.createList(4))
+        val totalLoadingItem = 3
+        posts.addAll(Post.createList(totalLoadingItem))
         isRefreshList.value = true
     }
 
