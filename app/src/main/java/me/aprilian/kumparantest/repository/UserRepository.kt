@@ -1,14 +1,15 @@
 package me.aprilian.kumparantest.repository
 
 import me.aprilian.kumparantest.api.ApiService
+import me.aprilian.kumparantest.api.BaseDataSource
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val apiService: ApiService
-) {
-    suspend fun getUser(id:Int) = apiService.getUser(id)
+): BaseDataSource() {
+    suspend fun getUser(id:Int) = getResult { apiService.getUser(id) }
 
-    suspend fun getUserAlbums(userId:Int) = apiService.getUserAlbums(userId)
+    suspend fun getUserAlbums(userId:Int) = getResult { apiService.getUserAlbums(userId) }
 
-    suspend fun getPhotos(albumId:Int) = apiService.getPhotos(albumId)
+    suspend fun getPhotos(albumId:Int) = getResult { apiService.getPhotos(albumId) }
 }

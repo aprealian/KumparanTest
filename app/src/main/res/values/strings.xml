@@ -1,5 +1,24 @@
 <resources>
-    <string name="app_name">Kumparan Test</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">News App</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="email">Email</string>
+    <string name="address">Address</string>
+    <string name="company">Company</string>
+
+    <string name="post_author">Post Author</string>
+    <string name="albums">Albums</string>
+    <string name="comments">Comments</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="request_failed">Request failed</string>
+    <string name="comment_not_found">Comment not found</string>
+    <string name="album_not_found">Album not found</string>
+    <string name="coming_soon">Coming soon</string>
+
+    <string name="no_item_found">No items found</string>
+    <string name="please_refresh_the_page_and_try_again">Please refresh the page and try again</string>
+    <string name="sorry_error">Error..</string>
+    <string name="oops_something_happened_try_again">Oops! Something happened try again</string>
+    <string name="failed_to_load_data">Failed to load data</string>
+
 </resources>

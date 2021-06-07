@@ -15,37 +15,54 @@
         tools:paddingHorizontal="16dp">
 
         <TextView
-            android:id="@+id/tvComment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@{comment.body}"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:id="@+id/tvAuthorNameSymbol"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_circle"
+            android:gravity="center"
+            android:text="@{String.valueOf(comment.name.charAt(0)).toUpperCase()}"
+            android:textColor="@color/white"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Lorem Ipsum"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="A"
             />
 
-        <TextView
-            android:id="@+id/tvCommentAuthorName"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@{comment.name}"
-            android:textSize="12sp"
-            app:layout_constraintTop_toBottomOf="@+id/tvComment"
-            tools:text="This is the description.."
-            />
+            android:background="@drawable/bg_comment"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical"
+            android:paddingVertical="10dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvAuthorNameSymbol"
+            app:layout_constraintEnd_toEndOf="parent">
+            <TextView
+                android:id="@+id/tvComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{comment.name}"
+                android:textSize="14sp"
+                android:textColor="@color/black"
+                tools:text="Aprilian"
+                />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="16dp"
-            android:background="#6ACACACA"
-            app:layout_constraintTop_toBottomOf="@+id/tvCommentAuthorName"
-            />
+            <TextView
+                android:id="@+id/tvCommentAuthorName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{comment.body}"
+                android:textColor="#989898"
+                android:textSize="12sp"
+                tools:text="This is the description.."
+                />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

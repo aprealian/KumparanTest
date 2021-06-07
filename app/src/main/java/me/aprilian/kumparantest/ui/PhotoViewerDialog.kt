@@ -32,6 +32,9 @@ class PhotoViewerDialog : DialogFragment() {
         photo?.let {
             binding.tvTitle.text = it.title
             binding.ivPhoto.load(it.url)
+            binding.buttonBack.setOnClickListener {
+                dialog?.cancel()
+            }
         }
     }
 
