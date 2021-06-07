@@ -1,4 +1,4 @@
-package me.aprilian.kumparantest.ui
+package me.aprilian.kumparantest.ui.features.user
 
 import android.os.Bundle
 import android.view.LayoutInflater

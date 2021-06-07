@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.PostListFragment">
+    tools:context=".ui.features.postlist.PostListFragment">
 
     <data>
         <variable
             name="adapter"
-            type="me.aprilian.kumparantest.ui.PostAdapter" />
+            type="me.aprilian.kumparantest.ui.adapter.PostAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -9,7 +9,7 @@
             type="me.aprilian.kumparantest.data.Album" />
         <variable
             name="adapter"
-            type="me.aprilian.kumparantest.ui.PhotoAdapter" />
+            type="me.aprilian.kumparantest.ui.adapter.PhotoAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
