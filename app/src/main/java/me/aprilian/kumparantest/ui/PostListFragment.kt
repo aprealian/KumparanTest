@@ -70,7 +70,7 @@ class PostListFragment : Fragment() {
     private val onClickPost = object: PostAdapter.IPost{
         override fun clickPost(post: Post) {
             val action = PostListFragmentDirections.actionPostListToPost()
-            action.post = post
+            action.postId = post.id
             view?.findNavController()?.navigate(action)
         }
     }

@@ -5,9 +5,6 @@
 
     <data>
         <variable
-            name="post"
-            type="me.aprilian.kumparantest.data.Post" />
-        <variable
             name="adapter"
             type="me.aprilian.kumparantest.ui.CommentsAdapter" />
         <variable
@@ -54,7 +51,7 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/bg_rounded_line"
                     android:padding="10dp"
-                    android:onClick="@{(view) -> fragment.openUser(view, post.user)}"
+                    android:onClick="@{(view) -> fragment.openUser(view, vm.user.data)}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
                     <TextView
@@ -63,18 +60,19 @@
                         android:layout_height="28dp"
                         android:background="@drawable/bg_circle"
                         android:gravity="center"
-                        android:text="A"
+                        android:text="@{String.valueOf(vm.user.data.name.charAt(0)).toUpperCase()}"
                         android:textColor="@color/white"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        tools:text="A"
                         />
                     <TextView
                         android:id="@+id/tvAuthorName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
-                        android:text="@{post.user.name}"
+                        android:text="@{vm.user.data.name}"
                         android:textColor="#6E6E70"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -101,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="@{post.title}"
+                    android:text="@{vm.post.data.title}"
                     android:textColor="@color/black"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -114,7 +112,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="@{post.body}"
+                    android:text="@{vm.post.data.body}"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@+id/tvTitle"
                     tools:text="This is the description.."
@@ -136,6 +134,7 @@
                     android:layout_marginVertical="16dp"
                     android:text="@{vm.comments.data.size > 0 ? @string/comments+` (`+String.valueOf(vm.comments.data.size)+`) ` : @string/comments}"
                     android:textSize="14sp"
+                    android:visibility="@{vm.post.data == null ? View.GONE : View.VISIBLE}"
                     app:layout_constraintTop_toBottomOf="@+id/line"
                     app:layout_constraintBottom_toBottomOf="parent"
                     tools:text="Comments (56)"

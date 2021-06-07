@@ -16,15 +16,15 @@ abstract class BaseRVAdapter<T>(val ctx: Context?, var resource: Resource<List<T
     open var errorMessage = "Failed to load data"
 
     open fun createLoadingViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return LoadingItem(LayoutInflater.from(parent.context).inflate(R.layout.item_list_loading, parent, false))
+        return LoadingItem(LayoutInflater.from(parent.context).inflate(R.layout.state_loading, parent, false))
     }
 
     open fun createErrorViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return ErrorItem(LayoutInflater.from(parent.context).inflate(R.layout.item_list_error, parent, false))
+        return ErrorItem(LayoutInflater.from(parent.context).inflate(R.layout.state_error, parent, false))
     }
 
     open fun createEmptyViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        return EmptyItem(LayoutInflater.from(parent.context).inflate(R.layout.item_list_empty, parent, false))
+        return EmptyItem(LayoutInflater.from(parent.context).inflate(R.layout.state_empty, parent, false))
     }
 
     fun submitData(data: Resource<List<T>>?) {

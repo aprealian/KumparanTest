@@ -20,11 +20,11 @@ import me.aprilian.kumparantest.data.User
 import me.aprilian.kumparantest.databinding.FragmentPostBinding
 import me.aprilian.kumparantest.databinding.ItemCommentBinding
 import me.aprilian.kumparantest.repository.PostRepository
+import me.aprilian.kumparantest.repository.UserRepository
 import me.aprilian.kumparantest.ui.base.BaseFragment
 import me.aprilian.kumparantest.ui.base.BaseRVAdapter
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
 import me.aprilian.kumparantest.utils.Utils
-import me.aprilian.kumparantest.utils.Utils.toast
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,8 +37,7 @@ class PostFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        postViewModel.setPost(args.post)
-        postViewModel.postId = args.post?.id
+        postViewModel.postId = args.postId
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,7 +45,6 @@ class PostFragment : BaseFragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = postViewModel
         binding.fragment = this
-        postViewModel.getPost()?.let { binding.post = it }
         return binding.root
     }
 
@@ -54,7 +52,7 @@ class PostFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupAdapter()
         setupObserver()
-        loadComments()
+        loadData()
     }
 
     private fun setupObserver() {
@@ -69,32 +67,50 @@ class PostFragment : BaseFragment() {
     }
 
     private fun setupAdapter() {
-        adapter = CommentsAdapter(requireContext(), Resource.loading(null)) {
-            requireContext().toast("click")
-        }
+        adapter = CommentsAdapter(requireContext(), Resource.loading(null))
         binding.adapter = adapter
         binding.rvComments.addItemDecoration(SpacesItemDecoration(Utils.dpToPx(requireContext(),16.0f).toInt()))
     }
 
-    private fun loadComments() {
+    private fun loadData() {
+        postViewModel.getPost()
         postViewModel.getComments()
     }
 
-    fun openUser(view: View, user: User){
-        val action = PostFragmentDirections.actionPostToUser()
-        action.user = user
+    fun openUser(view: View?, user: User?){
+        if (view == null || user == null) return
+        val action = PostFragmentDirections.actionPostToUser().apply { this.user = user }
         view.findNavController().navigate(action)
     }
 }
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val postRepository: PostRepository
+    private val postRepository: PostRepository,
+    private val userRepository: UserRepository
 ): ViewModel(){
     var postId: Int? = null
-    private var post: Post? = null
-    fun getPost(): Post? { return post }
-    fun setPost(post:Post?) { this.post = post }
+
+    private val _post = MutableLiveData<Resource<Post>>()
+    val post: LiveData<Resource<Post>> = _post
+
+    fun getPost(){
+        viewModelScope.launch {
+            postId?.let {
+                _post.value = postRepository.getPost(it)
+                getUser()
+            }
+        }
+    }
+
+    private val _user = MutableLiveData<Resource<User>>()
+    val user: LiveData<Resource<User>> = _user
+
+    private fun getUser(){
+        viewModelScope.launch {
+            post.value?.data?.userId?.let { _user.value = userRepository.getUser(it) }
+        }
+    }
 
     private val _comments = MutableLiveData<Resource<List<Comment>>>()
     val comments: LiveData<Resource<List<Comment>>> = _comments
@@ -106,7 +122,7 @@ class PostViewModel @Inject constructor(
     }
 }
 
-class CommentsAdapter(ctx: Context?, resource: Resource<List<Comment>>, private val clickListener: (Comment) -> Unit) : BaseRVAdapter<Comment>(ctx, resource) {
+class CommentsAdapter(ctx: Context?, resource: Resource<List<Comment>>) : BaseRVAdapter<Comment>(ctx, resource) {
 
     class CommentViewHolder(val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root)
 

@@ -20,10 +20,9 @@
             app:popUpToSaveState="true"
             app:restoreState="true">
             <argument
-                android:name="post"
-                android:defaultValue="@null"
-                app:argType="me.aprilian.kumparantest.data.Post"
-                app:nullable="true" />
+                android:name="postId"
+                android:defaultValue="0"
+                app:argType="integer" />
         </action>
     </fragment>
 
@@ -33,10 +32,9 @@
         android:label="Post"
         tools:layout="@layout/fragment_post">
         <argument
-            android:name="post"
-            android:defaultValue="@null"
-            app:argType="me.aprilian.kumparantest.data.Post"
-            app:nullable="true" />
+            android:name="postId"
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_post_to_user"
             app:destination="@id/user_dest"

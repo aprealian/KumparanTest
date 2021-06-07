@@ -15,4 +15,10 @@
     <string name="album_not_found">Album not found</string>
     <string name="coming_soon">Coming soon</string>
 
+    <string name="no_item_found">No items found</string>
+    <string name="please_refresh_the_page_and_try_again">Please refresh the page and try again</string>
+    <string name="sorry_error">Error..</string>
+    <string name="oops_something_happened_try_again">Oops! Something happened try again</string>
+    <string name="failed_to_load_data">Failed to load data</string>
+
 </resources>
