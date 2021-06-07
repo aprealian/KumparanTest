@@ -7,29 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.internal.ViewUtils.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
-import me.aprilian.kumparantest.data.Resource
-import me.aprilian.kumparantest.data.Post
-import me.aprilian.kumparantest.data.User
+import me.aprilian.kumparantest.R
+import me.aprilian.kumparantest.data.*
 import me.aprilian.kumparantest.databinding.FragmentPostListBinding
 import me.aprilian.kumparantest.databinding.ItemPostBinding
-import me.aprilian.kumparantest.databinding.ItemPostLoadingBinding
 import me.aprilian.kumparantest.repository.PostRepository
 import me.aprilian.kumparantest.repository.UserRepository
+import me.aprilian.kumparantest.ui.base.BaseRVAdapter
 import me.aprilian.kumparantest.utils.SpacesItemDecoration
-import me.aprilian.kumparantest.utils.Utils.toast
+import me.aprilian.kumparantest.utils.Utils.dpToPx
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,39 +33,40 @@ class PostListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPostListBinding.inflate(layoutInflater)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAdapter()
-        initObserver()
+        setupAdapter()
+        setupObserver()
     }
 
-    private fun initObserver() {
-        postListViewModel.isRefreshList.observe(viewLifecycleOwner, Observer {
-            adapter.notifyDataSetChanged()
-        })
-
-        postListViewModel.message.observe(viewLifecycleOwner, Observer { message ->
-            requireContext().toast(message)
+    private fun setupObserver() {
+        postListViewModel.posts.observe(viewLifecycleOwner, Observer {
+            updateData(it)
         })
     }
 
-    private fun initAdapter(){
-        adapter = PostAdapter()
-        adapter.setListener(onClickPost)
-        postListViewModel.getPosts().let { adapter.submitList(it) }
-        binding.adapter = adapter
-        binding.rvPosts.addItemDecoration(SpacesItemDecoration(dpToPx(requireContext(),16).toInt()))
+    private fun updateData(data: Resource<List<Post>>?) {
+        if (binding.rvPosts.adapter == null || data == null) return
+        (binding.rvPosts.adapter as PostAdapter).submitData(data)
     }
 
-    private val onClickPost = object: PostAdapter.IPost{
-        override fun clickPost(post: Post) {
-            val action = PostListFragmentDirections.actionPostListToPost()
-            action.postId = post.id
-            view?.findNavController()?.navigate(action)
+    private fun setupAdapter(){
+        adapter = PostAdapter(requireContext(), Resource.loading(null)) {
+            openPost(it?.id)
         }
+        binding.adapter = adapter
+        binding.rvPosts.addItemDecoration(SpacesItemDecoration(dpToPx(requireContext(),16.0f).toInt()))
+    }
+
+    private fun openPost(postId: Int?) {
+        if (postId == null) return
+        val action = PostListFragmentDirections.actionPostListToPost()
+        action.postId = postId
+        view?.findNavController()?.navigate(action)
     }
 }
 
@@ -83,77 +77,34 @@ class PostListViewModel @Inject constructor(
    private val userRepository: UserRepository
 ): ViewModel(){
 
-    private val posts: ArrayList<Post> = arrayListOf()
-    val isRefreshList: MutableLiveData<Boolean> = MutableLiveData()
-    val message: MutableLiveData<String> = MutableLiveData()
+    private val _posts = MutableLiveData<Resource<List<Post>>>()
+    val posts: LiveData<Resource<List<Post>>> = _posts
 
-    fun getPosts(): ArrayList<Post> {
-        return posts
-    }
+    private fun getPosts(){
+        viewModelScope.launch {
+            val result = postRepository.getPosts()
+            if (result.status == Resource.Status.SUCCESS && !result.data.isNullOrEmpty()){
+                val temps = ArrayList<Post>()
+                val refreshEvery = 10
 
-    private fun loadPosts() = viewModelScope.launch {
-        showLoading()
-        postRepository.getPosts(1, 10).let {
-            when(it.status){
-                Resource.Status.SUCCESS -> {
-                    it.data?.let { list ->
-                        val refreshEvery = 10
-                        val tempItems: ArrayList<Post> = arrayListOf()
+                for (post in result.data){
+                    //getting user data
+                    val user = getUser(post.userId)
+                    post.user = user
+                    temps.add(post)
 
-                        for (post in list){
-                            //getting user data
-                            val user = getUser(post.userId)
-                            post.user = user
-                            tempItems.add(post)
-
-                            //check condition to refresh list
-                            if (tempItems.size >= refreshEvery){
-                                addItemsBeforeLoadingItem(tempItems)
-                                tempItems.clear()
-                                isRefreshList.value = true
-                            }
-                        }
-
-                        //add recent items
-                        addItemsBeforeLoadingItem(tempItems)
-                        isRefreshList.value = true
-
-                        //save to cache
-                        postRepository.savePosts(posts)
+                    //check condition to refresh list
+                    //Note: update partially to adapter to reduce waiting/loading time
+                    if (temps.size % refreshEvery == 0){
+                        _posts.value = Resource(Resource.Status.SUCCESS, temps, "")
                     }
                 }
-                else -> {
-                    //API Error handling
-                    if (Resource.isNoInternetConnection(it.message)){
-                        //load from cache
-                        postRepository.getPostsFromDb()?.let { list ->
-                            posts.clear()
-                            posts.addAll(list)
-                        }
-                        isRefreshList.value = true
-                    }
 
-                    message.value = Resource.getErrorMessageToUser(context, it.message)
-                }
+                _posts.value = Resource(Resource.Status.SUCCESS, temps, "")
+            } else {
+                _posts.value = result
             }
         }
-        hideLoading()
-    }
-
-    private fun addItemsBeforeLoadingItem(items: List<Post>){
-        val index = posts.indexOfFirst { it.id == 0 }
-        if (index >= 0) posts.addAll(index, items) else posts.addAll(items)
-    }
-
-    private fun showLoading(){
-        val totalLoadingItem = 3
-        posts.addAll(Post.createList(totalLoadingItem))
-        isRefreshList.value = true
-    }
-
-    private fun hideLoading(){
-        posts.removeIf { it.id == 0 }
-        isRefreshList.value = true
     }
 
     private suspend fun getUser(userId: Int): User? {
@@ -161,68 +112,26 @@ class PostListViewModel @Inject constructor(
     }
 
     init {
-        loadPosts()
+        getPosts()
     }
 }
 
-class PostAdapter : ListAdapter<Post, RecyclerView.ViewHolder>(Companion) {
+class PostAdapter(ctx: Context?, resource: Resource<List<Post>>, private val clickListener: (Post?) -> Unit) : BaseRVAdapter<Post>(ctx, resource, loadingLayout = R.layout.item_post_loading) {
 
-    private var listener: IPost? = null
-    private val TYPE_ITEM = 0
-    private val TYPE_LOADING_ITEM = 1
+    class PostViewHolder(val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root)
 
-    inner class PostViewHolder(val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(item: Post){
-            binding.post = item
-            binding.executePendingBindings()
-
-            itemView.setOnClickListener {
-                listener?.clickPost(item)
-            }
-        }
-    }
-
-    inner class LoadingViewHolder(val binding: ItemPostLoadingBinding) : RecyclerView.ViewHolder(binding.root)
-
-    companion object: DiffUtil.ItemCallback<Post>() {
-        override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem === newItem
-        override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem.id == newItem.id
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-
-        return when (viewType) {
-            TYPE_ITEM -> {
-                val binding = ItemPostBinding.inflate(layoutInflater)
-                PostViewHolder(binding)
-            }
-            else -> {
-                val binding = ItemPostLoadingBinding.inflate(layoutInflater)
-                LoadingViewHolder(binding)
-            }
-        }
+    override fun createDataViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
+        return PostViewHolder(ItemPostBinding.inflate(LayoutInflater.from(parent.context)))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val post = getItem(position)
-
-        if (holder.itemViewType == TYPE_ITEM){
-            val postViewHolder = holder as PostViewHolder
-            postViewHolder.bind(post)
+        if (holder is PostViewHolder) {
+            val post = resource.data?.get(position)
+            holder.binding.post = post
+            holder.binding.executePendingBindings()
+            holder.itemView.setOnClickListener {
+                clickListener(post)
+            }
         }
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        val item = currentList[position]
-        return if (item.id == 0) TYPE_LOADING_ITEM else TYPE_ITEM
-    }
-
-    fun setListener(listener: IPost){
-        this.listener = listener
-    }
-
-    interface IPost{
-        fun clickPost(post: Post)
     }
 }

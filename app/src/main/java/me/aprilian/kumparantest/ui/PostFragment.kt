@@ -62,7 +62,7 @@ class PostFragment : BaseFragment() {
     }
 
     private fun updateData(data: Resource<List<Comment>>?) {
-        if (data == null) return
+        if (binding.rvComments.adapter == null || data == null) return
         (binding.rvComments.adapter as CommentsAdapter).submitData(data)
     }
 
@@ -79,7 +79,7 @@ class PostFragment : BaseFragment() {
 
     fun openUser(view: View?, user: User?){
         if (view == null || user == null) return
-        val action = PostFragmentDirections.actionPostToUser().apply { this.user = user }
+        val action = PostFragmentDirections.actionPostToUser().apply { this.userId = user.id }
         view.findNavController().navigate(action)
     }
 }

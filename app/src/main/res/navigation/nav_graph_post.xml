@@ -45,10 +45,9 @@
             app:popUpToSaveState="true"
             app:restoreState="true">
             <argument
-                android:name="user"
-                android:defaultValue="@null"
-                app:argType="me.aprilian.kumparantest.data.User"
-                app:nullable="true" />
+                android:name="userId"
+                android:defaultValue="0"
+                app:argType="integer" />
         </action>
     </fragment>
 
@@ -58,10 +57,9 @@
         android:label="user"
         tools:layout="@layout/fragment_user">
         <argument
-            android:name="user"
-            android:defaultValue="@null"
-            app:argType="me.aprilian.kumparantest.data.User"
-            app:nullable="true" />
+            android:name="userId"
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

@@ -4,6 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
+        <variable
+            name="fragment"
+            type="me.aprilian.kumparantest.ui.UserFragment" />
         <variable
             name="user"
             type="me.aprilian.kumparantest.data.User" />
@@ -13,7 +17,6 @@
         <variable
             name="vm"
             type="me.aprilian.kumparantest.ui.UserViewModel" />
-        <import type="android.view.View"/>
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -36,6 +39,7 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_marginTop="16dp"
+                    android:onClick="@{(view) -> fragment.navigateBack()}"
                     android:src="@drawable/ic_back"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +51,7 @@
                     android:layout_height="64dp"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:text="@{String.valueOf(user.name.charAt(0))}"
+                    android:text="@{String.valueOf(vm.user.data.name.charAt(0)).toUpperCase()}"
                     android:textColor="@color/white"
                     android:textSize="24sp"
                     android:background="@drawable/bg_circle"
@@ -62,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
-                    android:text="@{user.name}"
+                    android:text="@{vm.user.data.name}"
                     android:textColor="@color/purple_200"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -87,7 +91,7 @@
                     android:id="@+id/tvUserEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{user.email}"
+                    android:text="@{vm.user.data.email}"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@+id/tvUserEmailTitle"
                     tools:text="Lorem Ipsum"
@@ -108,7 +112,7 @@
                     android:id="@+id/tvUserAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{user.address.street+' '+user.address.city+' '+user.address.zipcode}"
+                    android:text="@{vm.user.data.address.street+' '+vm.user.data.address.city+' '+vm.user.data.address.zipcode}"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@+id/tvUserAddressTitle"
                     tools:text="This is the description.."
@@ -130,7 +134,7 @@
                     android:id="@+id/tvUserCompany"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@{user.company.name}"
+                    android:text="@{vm.user.data.company.name}"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@+id/tvUserCompanyTitle"
                     tools:text="This is the description.."
@@ -150,8 +154,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="16dp"
-                    android:text="@{vm.totalAlbums > 0 ? @string/albums+` (`+String.valueOf(vm.totalAlbums)+`) ` : @string/albums}"
+                    android:text="@{vm.albums.data.size > 0 ? @string/comments+` (`+String.valueOf(vm.albums.data.size)+`) ` : @string/comments}"
                     android:textSize="14sp"
+                    android:visibility="@{vm.user.data == null ? View.GONE : View.VISIBLE}"
                     app:layout_constraintTop_toBottomOf="@+id/line"
                     app:layout_constraintBottom_toBottomOf="parent"
                     tools:text="Albums (56)"
@@ -174,31 +179,6 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:itemCount="3"
                     tools:listitem="@layout/item_album"
-                    />
-
-                <androidx.core.widget.ContentLoadingProgressBar
-                    android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyleLarge"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginVertical="16dp"
-                    android:visibility="@{vm.isLoading ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintTop_toBottomOf="@+id/rvAlbums"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
-
-                <TextView
-                    android:id="@+id/tvNotFound"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="16dp"
-                    android:text="@string/album_not_found"
-                    android:visibility="@{vm.isAlbumNotFound ? View.VISIBLE : View.GONE}"
-                    app:layout_constraintTop_toBottomOf="@+id/progressBar"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
