@@ -6,13 +6,13 @@
     <data>
         <variable
             name="adapter"
-            type="me.aprilian.kumparantest.ui.CommentsAdapter" />
+            type="me.aprilian.kumparantest.ui.adapter.CommentsAdapter" />
         <variable
             name="vm"
-            type="me.aprilian.kumparantest.ui.PostViewModel" />
+            type="me.aprilian.kumparantest.ui.features.post.PostViewModel" />
         <variable
             name="fragment"
-            type="me.aprilian.kumparantest.ui.PostFragment" />
+            type="me.aprilian.kumparantest.ui.features.post.PostFragment" />
         <import type="android.view.View"/>
     </data>
 

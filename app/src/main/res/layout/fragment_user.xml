@@ -7,16 +7,16 @@
         <import type="android.view.View"/>
         <variable
             name="fragment"
-            type="me.aprilian.kumparantest.ui.UserFragment" />
+            type="me.aprilian.kumparantest.ui.features.user.UserFragment" />
         <variable
             name="user"
             type="me.aprilian.kumparantest.data.User" />
         <variable
             name="adapter"
-            type="me.aprilian.kumparantest.ui.AlbumAdapter" />
+            type="me.aprilian.kumparantest.ui.adapter.AlbumAdapter" />
         <variable
             name="vm"
-            type="me.aprilian.kumparantest.ui.UserViewModel" />
+            type="me.aprilian.kumparantest.ui.features.user.UserViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView

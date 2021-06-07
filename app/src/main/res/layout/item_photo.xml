@@ -10,7 +10,7 @@
             type="me.aprilian.kumparantest.data.Photo" />
         <variable
             name="photoState"
-            type="me.aprilian.kumparantest.ui.PhotoAdapter.PhotoState" />
+            type="me.aprilian.kumparantest.ui.adapter.PhotoAdapter.PhotoState" />
     </data>
 
     <androidx.cardview.widget.CardView
