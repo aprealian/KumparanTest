@@ -32,10 +32,13 @@ buildscript {
         lifecycleVersion = '2.2.0'
         materialVersion = '1.2.0'
         mockito = "2.23.4"
+        mockitoInline = "2.13.0"
+        mockitoKotlin = "3.2.0"
         navigationVersion = '2.4.0-alpha01'
         okhttpLoggingVersion = '4.7.2'
         pagingVersion = '3.0.0-alpha02'
         photoView = '2.0.0'
+        powermock = '1.6.5'
         preferenceKtx = '1.1.1'
         recyclerViewVersion = '1.2.1'
         retrofitVersion = '2.9.0'

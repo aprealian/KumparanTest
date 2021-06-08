@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.P], manifest=Config.NONE)
-class ExampleUnitTest {
+class UtilsTest {
 
     private lateinit var context: Context
 
@@ -52,7 +52,7 @@ class ExampleUnitTest {
     }
 
     @Test
-    fun imageViewExtensionTest() {
+    fun imageViewExtension_loadImageSourceTest() {
         val imageView = ImageView(context)
         assertDoesNotThrow { imageView.load("") }
         assertDoesNotThrow { imageView.load("https://") }
