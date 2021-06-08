@@ -29,7 +29,7 @@ class UserFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentUserBinding.inflate(layoutInflater).also {
             it.lifecycleOwner = viewLifecycleOwner
-            it.vm = userViewModel
+            it.viewModel = userViewModel
             it.fragment = this
             it.executePendingBindings()
         }
@@ -68,7 +68,6 @@ class UserFragment : BaseFragment() {
     }
 
     private fun loadData() {
-        userViewModel.getUser()
-        userViewModel.getAlbums()
+        userViewModel.loadUser()
     }
 }

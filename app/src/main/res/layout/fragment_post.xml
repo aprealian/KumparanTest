@@ -4,156 +4,167 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import
+            type="android.view.View"/>
+        <import
+            type="me.aprilian.kumparantest.data.Resource.Status"
+            />
         <variable
             name="adapter"
             type="me.aprilian.kumparantest.ui.adapter.CommentsAdapter" />
         <variable
-            name="vm"
+            name="viewModel"
             type="me.aprilian.kumparantest.ui.features.post.PostViewModel" />
         <variable
             name="fragment"
             type="me.aprilian.kumparantest.ui.features.post.PostFragment" />
-        <import type="android.view.View"/>
     </data>
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_page">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        app:refreshing="@{viewModel.post.status == Status.LOADING}"
+        app:onRefreshListener="@{() -> viewModel.loadPost()}">
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
+            android:layout_height="match_parent"
+            android:background="@color/background_page">
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:paddingHorizontal="16dp"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/buttonBack"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:onClick="@{(view) -> fragment.navigateBack()}"
-                    android:src="@drawable/ic_back"
-                    app:layout_constraintTop_toTopOf="@+id/header"
-                    app:layout_constraintBottom_toBottomOf="@+id/header"
-                    app:layout_constraintStart_toStartOf="parent"
-                    />
+                android:layout_height="wrap_content">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/header"
-                    android:layout_width="0dp"
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_rounded_line"
-                    android:padding="10dp"
-                    android:onClick="@{(view) -> fragment.openUser(view, vm.user.data)}"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-                    <TextView
-                        android:id="@+id/tvAuthorNameSymbol"
+                    android:background="@color/white"
+                    android:paddingHorizontal="16dp"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/buttonBack"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:background="@drawable/bg_circle"
-                        android:gravity="center"
-                        android:text="@{String.valueOf(vm.user.data.name.charAt(0)).toUpperCase()}"
-                        android:textColor="@color/white"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        tools:text="A"
+                        android:onClick="@{(view) -> fragment.navigateBack()}"
+                        android:src="@drawable/ic_back"
+                        app:layout_constraintTop_toTopOf="@+id/header"
+                        app:layout_constraintBottom_toBottomOf="@+id/header"
+                        app:layout_constraintStart_toStartOf="parent"
                         />
-                    <TextView
-                        android:id="@+id/tvAuthorName"
-                        android:layout_width="wrap_content"
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/header"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:text="@{vm.user.data.name}"
-                        android:textColor="#6E6E70"
-                        android:textSize="14sp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_rounded_line"
+                        android:padding="10dp"
+                        android:onClick="@{(view) -> fragment.openUser(view, viewModel.user.data)}"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+                        <TextView
+                            android:id="@+id/tvAuthorNameSymbol"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_circle"
+                            android:gravity="center"
+                            android:text="@{String.valueOf(viewModel.user.data.name.charAt(0)).toUpperCase()}"
+                            android:textColor="@color/white"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            tools:text="A"
+                            />
+                        <TextView
+                            android:id="@+id/tvAuthorName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@{viewModel.user.data.name}"
+                            android:textColor="#6E6E70"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/tvAuthorNameSymbol"
+                            tools:text="Aprilian"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:text="@string/post_author"
+                            android:textColor="#BBBABA"
+                            android:textSize="12sp"
+                            app:layout_constraintTop_toBottomOf="@+id/tvAuthorName"
+                            app:layout_constraintEnd_toStartOf="@+id/tvAuthorNameSymbol"
+                            tools:text="Lorem Ipsum"
+                            />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@{viewModel.post.data.title}"
+                        android:textColor="@color/black"
+                        android:textSize="22sp"
                         android:textStyle="bold"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tvAuthorNameSymbol"
-                        tools:text="Aprilian"
-                        />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:text="@string/post_author"
-                        android:textColor="#BBBABA"
-                        android:textSize="12sp"
-                        app:layout_constraintTop_toBottomOf="@+id/tvAuthorName"
-                        app:layout_constraintEnd_toStartOf="@+id/tvAuthorNameSymbol"
+                        app:layout_constraintTop_toBottomOf="@+id/header"
                         tools:text="Lorem Ipsum"
                         />
+
+                    <TextView
+                        android:id="@+id/tvBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@{viewModel.post.data.body}"
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                        tools:text="This is the description.."
+                        />
+
+                    <View
+                        android:id="@+id/line"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="#45CACACA"
+                        app:layout_constraintTop_toBottomOf="@+id/tvBody"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvCommentCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="16dp"
+                        android:text="@{viewModel.comments.data.size > 0 ? @string/comments+` (`+String.valueOf(viewModel.comments.data.size)+`) ` : @string/comments}"
+                        android:textSize="14sp"
+                        android:visibility="@{viewModel.post.data == null ? View.GONE : View.VISIBLE}"
+                        app:layout_constraintTop_toBottomOf="@+id/line"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:text="Comments (56)"
+                        />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                <TextView
-                    android:id="@+id/tvTitle"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvComments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@{vm.post.data.title}"
-                    android:textColor="@color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@+id/header"
-                    tools:text="Lorem Ipsum"
-                    />
-
-                <TextView
-                    android:id="@+id/tvBody"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@{vm.post.data.body}"
-                    android:textSize="14sp"
-                    app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-                    tools:text="This is the description.."
-                    />
-
-                <View
-                    android:id="@+id/line"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="16dp"
-                    android:background="#45CACACA"
-                    app:layout_constraintTop_toBottomOf="@+id/tvBody"
-                    />
-
-                <TextView
-                    android:id="@+id/tvCommentCount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="16dp"
-                    android:text="@{vm.comments.data.size > 0 ? @string/comments+` (`+String.valueOf(vm.comments.data.size)+`) ` : @string/comments}"
-                    android:textSize="14sp"
-                    android:visibility="@{vm.post.data == null ? View.GONE : View.VISIBLE}"
-                    app:layout_constraintTop_toBottomOf="@+id/line"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:text="Comments (56)"
+                    app:setAdapter="@{adapter}"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@+id/container"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_comment"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvComments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:setAdapter="@{adapter}"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintTop_toBottomOf="@+id/container"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_comment"
-                />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </layout>

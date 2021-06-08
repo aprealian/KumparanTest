@@ -45,6 +45,7 @@ buildscript {
         robolectric = '4.3'
         roomVersion = '2.2.5'
         shimmer = '0.5.0'
+        swiperefreshlayout = '1.1.0'
         testExtJunit = '1.1.0'
         touchImageView = '3.1.0'
         uiAutomatorVersion = '2.2.0'
