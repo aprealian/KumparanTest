@@ -2,10 +2,10 @@ package me.aprilian.kumparantest.repository
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.aprilian.kumparantest.api.ApiService
-import me.aprilian.kumparantest.api.BaseDataSource
+import me.aprilian.kumparantest.datasource.api.ApiService
+import me.aprilian.kumparantest.datasource.api.BaseDataSource
 import me.aprilian.kumparantest.data.Post
-import me.aprilian.kumparantest.db.LocalDataStorage
+import me.aprilian.kumparantest.datasource.local.LocalDataStorage
 import javax.inject.Inject
 
 class PostRepository @Inject constructor(

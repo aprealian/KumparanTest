@@ -1,4 +1,4 @@
-package me.aprilian.kumparantest.api
+package me.aprilian.kumparantest.datasource.api
 
 import android.util.Log
 import me.aprilian.kumparantest.data.Resource

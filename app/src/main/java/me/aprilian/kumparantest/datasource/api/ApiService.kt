@@ -1,4 +1,4 @@
-package me.aprilian.kumparantest.api
+package me.aprilian.kumparantest.datasource.api
 
 import me.aprilian.kumparantest.data.*
 import retrofit2.Response

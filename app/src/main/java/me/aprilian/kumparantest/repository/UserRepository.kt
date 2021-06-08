@@ -1,7 +1,7 @@
 package me.aprilian.kumparantest.repository
 
-import me.aprilian.kumparantest.api.ApiService
-import me.aprilian.kumparantest.api.BaseDataSource
+import me.aprilian.kumparantest.datasource.api.ApiService
+import me.aprilian.kumparantest.datasource.api.BaseDataSource
 import javax.inject.Inject
 
 class UserRepository @Inject constructor(
