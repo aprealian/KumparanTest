@@ -34,7 +34,7 @@ class PostFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPostBinding.inflate(layoutInflater).also {
             it.lifecycleOwner = viewLifecycleOwner
-            it.vm = postViewModel
+            it.viewModel = postViewModel
             it.fragment = this
             it.executePendingBindings()
         }
@@ -66,8 +66,7 @@ class PostFragment : BaseFragment() {
     }
 
     private fun loadData() {
-        postViewModel.getPost()
-        postViewModel.getComments()
+        postViewModel.loadPost()
     }
 
     fun openUser(view: View?, user: User?){

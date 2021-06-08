@@ -22,11 +22,11 @@ class UserViewModel @Inject constructor(
     private val _user = MutableLiveData<Resource<User>>()
     val user: LiveData<Resource<User>> = _user
 
-    fun getUser(){
+    fun loadUser(){
         viewModelScope.launch {
             userId?.let {
                 _user.value = userRepository.getUser(it)
-                getUser()
+                loadAlbums()
             }
         }
     }
@@ -34,7 +34,7 @@ class UserViewModel @Inject constructor(
     private val _albums = MutableLiveData<Resource<List<Album>>>()
     val albums: LiveData<Resource<List<Album>>> = _albums
 
-    fun getAlbums(){
+    private fun loadAlbums(){
         viewModelScope.launch {
             userId?.let {
                 val albumsResult = userRepository.getUserAlbums(it)

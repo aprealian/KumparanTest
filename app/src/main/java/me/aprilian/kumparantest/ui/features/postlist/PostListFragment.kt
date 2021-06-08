@@ -24,6 +24,7 @@ class PostListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPostListBinding.inflate(layoutInflater).also {
             it.lifecycleOwner = viewLifecycleOwner
+            it.viewModel = postListViewModel
             it.executePendingBindings()
         }
         return binding.root
