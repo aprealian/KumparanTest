@@ -13,6 +13,7 @@ buildscript {
         targetSdkVersion = 30
 
         // App dependencies
+        androidxTestCore='1.2.0'
         appCompatVersion = '1.1.0'
         constraintLayoutVersion = '2.0.0-beta3'
         coreTestingVersion = '2.0.0'
@@ -24,11 +25,13 @@ buildscript {
         gsonVersion = '2.8.2'
         hiltVersion = '2.33-beta'
         junitVersion = '4.12'
+        jupiter = '5.3.2'
         kotlinVersion = '1.4.30'
         ktlintVersion = '0.38.1'
         ktxVersion = '1.5.0'
         lifecycleVersion = '2.2.0'
         materialVersion = '1.2.0'
+        mockito = "2.23.4"
         navigationVersion = '2.4.0-alpha01'
         okhttpLoggingVersion = '4.7.2'
         pagingVersion = '3.0.0-alpha02'
@@ -36,6 +39,7 @@ buildscript {
         preferenceKtx = '1.1.1'
         recyclerViewVersion = '1.2.1'
         retrofitVersion = '2.9.0'
+        robolectric = '4.3'
         roomVersion = '2.2.5'
         shimmer = '0.5.0'
         testExtJunit = '1.1.0'
