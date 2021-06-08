@@ -24,11 +24,12 @@ class PostViewModel @Inject constructor(
     private val _post = MutableLiveData<Resource<Post>>()
     val post: LiveData<Resource<Post>> = _post
 
-    fun getPost(){
+    fun loadPost(){
         viewModelScope.launch {
             postId?.let {
                 _post.value = postRepository.getPost(it)
-                getUser()
+                loadUser()
+                loadComments()
             }
         }
     }
@@ -36,7 +37,7 @@ class PostViewModel @Inject constructor(
     private val _user = MutableLiveData<Resource<User>>()
     val user: LiveData<Resource<User>> = _user
 
-    private fun getUser(){
+    private fun loadUser(){
         viewModelScope.launch {
             post.value?.data?.userId?.let { _user.value = userRepository.getUser(it) }
         }
@@ -45,7 +46,7 @@ class PostViewModel @Inject constructor(
     private val _comments = MutableLiveData<Resource<List<Comment>>>()
     val comments: LiveData<Resource<List<Comment>>> = _comments
 
-    fun getComments(){
+    private fun loadComments(){
         viewModelScope.launch {
             postId?.let { _comments.value = postRepository.getPostComments(it) }
         }

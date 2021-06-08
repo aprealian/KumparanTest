@@ -8,10 +8,7 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("/posts")
-    suspend fun getPosts(
-        @Query("start") start: Int = 1,
-        @Query("limit") limit: Int = 10
-    ): Response<List<Post>>
+    suspend fun getPosts(): Response<List<Post>>
 
     @GET("/posts/{id}")
     suspend fun getPost(

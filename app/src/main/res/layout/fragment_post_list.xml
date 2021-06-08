@@ -5,38 +5,50 @@
     tools:context=".ui.features.postlist.PostListFragment">
 
     <data>
+        <import
+            type="me.aprilian.kumparantest.data.Resource.Status" />
+        <variable
+            name="viewModel"
+            type="me.aprilian.kumparantest.ui.features.postlist.PostListViewModel" />
         <variable
             name="adapter"
             type="me.aprilian.kumparantest.ui.adapter.PostAdapter" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F9F9FB">
-        <TextView
-            android:id="@+id/tvTitle"
+        app:refreshing="@{viewModel.posts.status == Status.LOADING}"
+        app:onRefreshListener="@{() -> viewModel.loadPosts()}">
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="16dp"
-            android:text="@string/app_name"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            android:layout_height="match_parent"
+            android:background="#F9F9FB">
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="16dp"
+                android:text="@string/app_name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPosts"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:setAdapter="@{adapter}"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_post"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPosts"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:setAdapter="@{adapter}"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_post"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

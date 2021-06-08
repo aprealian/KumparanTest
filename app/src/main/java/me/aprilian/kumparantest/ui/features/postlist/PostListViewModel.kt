@@ -1,12 +1,10 @@
 package me.aprilian.kumparantest.ui.features.postlist
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.aprilian.kumparantest.data.Post
 import me.aprilian.kumparantest.data.Resource
@@ -17,7 +15,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostListViewModel @Inject constructor(
-        @ApplicationContext private val context: Context,
         private val postRepository: PostRepository,
         private val userRepository: UserRepository
 ): ViewModel(){
@@ -25,7 +22,7 @@ class PostListViewModel @Inject constructor(
     private val _posts = MutableLiveData<Resource<List<Post>>>()
     val posts: LiveData<Resource<List<Post>>> = _posts
 
-    private fun getPosts(){
+    fun loadPosts(){
         viewModelScope.launch {
             val result = postRepository.getPosts()
             if (result.status == Resource.Status.SUCCESS && !result.data.isNullOrEmpty()){
@@ -57,6 +54,6 @@ class PostListViewModel @Inject constructor(
     }
 
     init {
-        getPosts()
+        loadPosts()
     }
 }

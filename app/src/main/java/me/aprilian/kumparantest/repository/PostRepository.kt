@@ -12,13 +12,13 @@ class PostRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val apiService: ApiService
 ): BaseDataSource() {
-    suspend fun getPosts(start:Int = 1, limit: Int = 10) = getResult { apiService.getPosts(start, limit) }
+    suspend fun getPosts() = getResult { apiService.getPosts() }
 
-    suspend fun getPost(id:Int = 1) = getResult { apiService.getPost(id) }
+    suspend fun getPost(id:Int = 0) = getResult { apiService.getPost(id) }
 
-    suspend fun getPostComments(id:Int = 1) = getResult { apiService.getPostComments(id) }
+    suspend fun getPostComments(id:Int = 0) = getResult { apiService.getPostComments(id) }
 
-    fun savePosts(list: ArrayList<Post>){
+    fun savePosts(list: ArrayList<Post>?){
         LocalDataStorage.getInstance(context)?.addPosts(list)
     }
 
