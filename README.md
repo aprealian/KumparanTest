@@ -1,6 +1,12 @@
 # NewsApp for Kumparan Test
 Hi, I created Android news app using <a href="https://jsonplaceholder.typicode.com/">JSON Placeholder API</a> and Jetpack Component.
 
+[Download APK v1.01 from Repo](https://drive.google.com/file/d/1UNcE4V5cWeGj-xLjHlhcTxbqbaxpZwqX/view?usp=sharing)
+
+Download APK from PlayStore - (Waiting approval)
+
+<img src="https://github.com/aprealian/KumparanTest/blob/main/documentation/NewsApp-Preview.gif" alt="NewsApp Preview" height="480"/>
+
 ## Used Libraries
 
 <ul>
