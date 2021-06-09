@@ -18,27 +18,31 @@
         android:layout_height="150dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="1dp">
-        <ImageView
-            android:id="@+id/ivPhoto"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher_round"
-            tools:src="@mipmap/ic_launcher_round"
-            />
-        <TextView
-            android:id="@+id/tvPhotosCounter"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="#B2070A0C"
-            android:gravity="center"
-            android:text="@{`+`+ String.valueOf(photoState.moreItem)}"
-            android:textStyle="bold"
-            android:textSize="28sp"
-            android:textColor="@color/white"
-            android:visibility="@{photoState.latestCounter ? View.VISIBLE : View.GONE}"
-            tools:text="50"
-            />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/ivPhoto"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher_round"
+                tools:src="@mipmap/ic_launcher_round"
+                />
+            <TextView
+                android:id="@+id/tvPhotosCounter"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="#B2070A0C"
+                android:gravity="center"
+                android:text="@{`+`+ String.valueOf(photoState.moreItem)}"
+                android:textStyle="bold"
+                android:textSize="28sp"
+                android:textColor="@color/white"
+                android:visibility="@{photoState.latestCounter ? View.VISIBLE : View.GONE}"
+                tools:text="50"
+                />
+        </FrameLayout>
     </androidx.cardview.widget.CardView>
 
 </layout>

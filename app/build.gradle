@@ -33,7 +33,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     packagingOptions {
-        pickFirst  'META-INF/*'
+        //pickFirst  'META-INF/*'
+        //exclude 'META-INF/MANIFEST.MF'
     }
     kotlinOptions {
         jvmTarget = '1.8'
