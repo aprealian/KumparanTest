@@ -3,7 +3,7 @@ Hi, I created Android news app using <a href="https://jsonplaceholder.typicode.c
 
 [Download APK v1.01 from Repo](https://drive.google.com/file/d/1UNcE4V5cWeGj-xLjHlhcTxbqbaxpZwqX/view?usp=sharing)
 
-Download APK from PlayStore - (Waiting approval)
+[Download APK from PlayStore](https://play.google.com/store/apps/details?id=me.aprilian.kumparantest)
 
 <img src="https://github.com/aprealian/KumparanTest/blob/main/documentation/NewsApp-Preview.gif" alt="NewsApp Preview" height="480"/>
 
@@ -11,7 +11,7 @@ Download APK from PlayStore - (Waiting approval)
 
 <ul>
 <li><a href="https://developer.android.com/guide/navigation">Navigation</a>(Fragment transitions)</li>
-<li><a href="">Navigation</a> Data binding (Bind views and data)</li>
+<li><a href="https://developer.android.com/topic/libraries/data-binding">Data binding</a>  (Bind views and data)</li>
 <li><a href="https://developer.android.com/topic/libraries/architecture/viewmodel">ViewModel</a> (Store and manage UI-related data)</li>
 <li><a href="https://developer.android.com/topic/libraries/architecture/livedata">LiveData</a> (Observable data)</li>
 <li><a href="https://github.com/Kotlin/kotlinx.coroutines">Kotlin Coroutine</a> (Light-weight threads)</li>
